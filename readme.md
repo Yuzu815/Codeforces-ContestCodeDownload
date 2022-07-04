@@ -2,7 +2,7 @@
 
 ## Q & A
 
-![](img/pixiv-86374864-small.jpg)
+<img align="center" src="img/pixiv-86374864-small.jpg" />
 
 Q：这个工具有什么用？
 
