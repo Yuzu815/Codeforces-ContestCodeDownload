@@ -32,27 +32,40 @@ A：其实还有点小问题。这次的核心代码用`Go`进行编写，因为
 
 ## 截图展示
 
-**Manager, can export submissions.**
+#### Manager, can export submissions.
+
 ![image-20220705003842727](img/pic2.png)
 
 ---
 
-**Manager, but can't export submissions.**
+
+
+#### Manager, but can't export submissions.
+
 ![image-20220705003836572](img/pic1.png)
 
 ---
 
-**Need to further confirm the relationship between the user and the submitted code.**
+
+
+#### Need to further confirm the relationship between the user and the submitted code.
+
 ![image-20220705010230911](img/jplag1.png)
 
 ---
 
-**The relationship between the user and the submitted code is quickly confirmed.**
+
+
+#### The relationship between the user and the submitted code is quickly confirmed.
+
 ![image-20220705010601261](img/jplag2.png)
 
 ---
 
-**Presentation**
+
+
+#### Presentation
+
 ![pre.gif](img/Pre.gif)
 
 
