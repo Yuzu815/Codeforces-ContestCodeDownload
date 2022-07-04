@@ -2,7 +2,7 @@
 
 ## Q & A
 
-<img src="img/pixiv-86374864.jpg" alt="pixiv-86374864" style="zoom:25%;" />
+![](img/pixiv-86374864-small.jpg)
 
 Q：这个工具有什么用？
 
