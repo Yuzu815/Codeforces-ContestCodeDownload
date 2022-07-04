@@ -2,7 +2,7 @@
 
 ## Q & A
 
-![pixiv-86374864](img/pixiv-86374864.jpg)
+<img src="img/pixiv-86374864.jpg" alt="pixiv-86374864" style="zoom:25%;" />
 
 Q：这个工具有什么用？
 
@@ -53,6 +53,6 @@ A：其实还有点小问题。这次的核心代码用`Go`进行编写，因为
 ---
 
 **Presentation**
-![pre.gif](img/pre.gif)
+![pre.gif](img/Pre.gif)
 
 
