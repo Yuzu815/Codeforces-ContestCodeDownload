@@ -2,11 +2,7 @@
 
 ## Q & A
 
-<img src="/img/pixiv-86374864.jpg" style="zoom: 25%;" />
-
-<center>
-    <b>Pixiv: 86374864</b>
-</center>
+![pixiv-86374864](img/pixiv-86374864.jpg)
 
 Q：这个工具有什么用？
 
@@ -36,39 +32,27 @@ A：其实还有点小问题。这次的核心代码用`Go`进行编写，因为
 
 ## 截图展示
 
-![image-20220705003842727](/img/pic2.png)
-<center>
-    <b>Manager, can export submissions.</b>
-</center>
+**Manager, can export submissions.**
+![image-20220705003842727](img/pic2.png)
 
 ---
 
-![image-20220705003836572](/img/pic1.png)
-<center>
-    <b>Manager, but can't export submissions.</b>
-</center>
+**Manager, but can't export submissions.**
+![image-20220705003836572](img/pic1.png)
 
 ---
 
-![image-20220705010230911](/img/jplag1.png)
-
-<center>
-    <b>Need to further confirm the relationship between the user and the submitted code.</b>
-</center>
+**Need to further confirm the relationship between the user and the submitted code.**
+![image-20220705010230911](img/jplag1.png)
 
 ---
 
-![image-20220705010601261](/img/jplag2.png)
-
-<center>
-    <b>The relationship between the user and the submitted code is quickly confirmed.</b>
-</center>
+**The relationship between the user and the submitted code is quickly confirmed.**
+![image-20220705010601261](img/jplag2.png)
 
 ---
 
-![pre.gif](/img/pre.gif)
+**Presentation**
+![pre.gif](img/pre.gif)
 
-<center>
-    <b>Presentation</b>
-</center>
 
