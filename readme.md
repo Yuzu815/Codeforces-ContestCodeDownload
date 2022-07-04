@@ -1,6 +1,6 @@
 # Codeforces-ContestCodeDownload
 
-## Q & A
+## Q & A - Chinese
 
 <img align="center" src="img/pixiv-86374864-small.jpg" />
 
@@ -18,7 +18,7 @@ A：不，还有一个问题。在我尝试管理我的Group里其他管理员�
 
 Q：那我该怎么使用呢？
 
-A：你只需要将`release`中的`main.exe`文件放到一个合适的目录，再创建一个名叫`api.key`的文件在同一目录下。此后，你需要在`api.key`里面配置你在`Codeforces`的`API KEY`，`API SECRET`，`USERNAME`，`PASSWORD`。最后，你只需要双击运行`main.exe`，输入对应的比赛编号就可以了，比赛的代码文件会自动下载到同一目录。如果你还没有`API KEY`或`API SECRET`，你可以在[Settings - Codeforces](https://codeforces.com/settings/api)里创建一个。
+A：你只需要将`release`中的`main.exe`文件放到一个合适的目录，再创建一个名叫`api.key`的文件在同一目录下。然后，你需要在`api.key`里面配置你在`Codeforces`的`API KEY`，`API SECRET`，`USERNAME`，`PASSWORD`。注意，你需要使用JSON格式。最后，你只需要双击运行`main.exe`，输入对应的比赛编号就可以了，比赛的代码文件会自动下载到同一目录。如果你还没有`API KEY`或`API SECRET`，你可以在[Settings - Codeforces](https://codeforces.com/settings/api)里创建一个。
 
 Q：比赛的代码文件会以什么方式命名便于查看？
 
@@ -30,7 +30,37 @@ A：其实还有点小问题。这次的核心代码用`Go`进行编写，因为
 
 此外，未添加多线程，下载速度可能有限。
 
-## 截图展示
+
+
+## Q & A - English
+
+Q: What does this tool do?
+
+A: It can help you download the codes of all the official participants in a contest.
+
+Q: Isn't the official export code function supported?
+
+A: Yes, but the official exported code's files are named by SubmissionID. This can be troublesome when you need to analyse the downloaded code files. Especially when I use tools like SIM or Jplag to check the code, I can't quickly see who the code with high duplication rate comes from, so I need to click the links one by one to confirm.
+
+Q: So if I don't detect code duplication, the official system is good enough?
+
+A: No, there is one more problem. When I try to manage contests created by other admins in my Group, I can't export the contest code (screenshot shown at the bottom). I'm not sure if this is a special case, but it seems that only the creator of the contest can perform the code export operation. So, this tool is also designed to allow all  managers to download the contest code for analysis and archiving.
+
+Q: So how do I use it?
+
+A: You just need to put the `main.exe`  from the release into a suitable directory and create a file named `api.key` in the **same directory**.  Note that you need to fill this out in **JSON format**. After that, you need to configure your `API KEY`, `API SECRET,` `USERNAME`, `PASSWORD` in `api.key` inside Codeforces. Finally, you just need to double click to run `main.exe` and enter the corresponding contest number, and the code file of the contest will be downloaded to the same directory automatically. If you don't have an `API KEY` and `API SECRET` yet, you can create one in [Settings - Codeforces](https://codeforces.com/settings/api).
+
+Q: In what way will the contest code files be named for easy viewing?
+
+A: The current naming scheme is: `[problem index]-[problem name]-[contestant name]-[language used]([contest ID]#[submission ID])`. Note that I have only specially handled the four most used languages, C/C++/Java/Python, and the code submitted in other languages will end with `.txt` and be marked as `Other` on the language used. (screenshots are shown at the bottom)
+
+Q: There seems to be no more problems...
+
+A: Actually, there is still a small problem. This time the core code is written in Go, and since I'm new to Go and in a hurry, the exception handling part, the logging part, and the database part are not finished yet. So DEBUG may be more difficult ...
+
+In addition, no multi-threading has been added, so the download speed may be limited.
+
+## Screenshots
 
 #### Manager, can export submissions.
 
