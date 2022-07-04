@@ -1,6 +1,12 @@
-## Codeforces-ContestCodeDownload
+# Codeforces-ContestCodeDownload
+
+## Q & A
 
 <img src="/img/pixiv-86374864.jpg" style="zoom: 25%;" />
+
+<center>
+    <b>Pixiv: 86374864</b>
+</center>
 
 Q：这个工具有什么用？
 
@@ -22,28 +28,47 @@ Q：比赛的代码文件会以什么方式命名便于查看？
 
 A：目前的命名方式是：`题号-题目名称-选手名称-所用语言(比赛ID#提交ID)`。需要注意的是，我只特殊处理了C/C++/Java/Python这四类使用的最多的语言，其他语言提交的代码会以`.txt`结尾，并在`所用语言`上标记为`Other`。（截图展示在最下方）
 
-Q：好像没什么问题了。
+Q：好像没什么问题了...
 
 A：其实还有点小问题。这次的核心代码用`Go`进行编写，因为初上手`Go`，而且时间较赶，其中的异常处理部分，日志部分，和数据库部分都还没有完成。因此`DEBUG`可能比较辛苦...
 
-![image-20220705003842727](C:\Users\vegetable1024\Desktop\Codeforces-ContestCodeDownload\img\pic2.png)
+此外，未添加多线程，下载速度可能有限。
+
+## 截图展示
+
+![image-20220705003842727](/img/pic2.png)
 <center>
     <b>Manager, can export submissions.</b>
 </center>
 
-![image-20220705003836572](C:\Users\vegetable1024\Desktop\Codeforces-ContestCodeDownload\img\pic1.png)
+---
+
+![image-20220705003836572](/img/pic1.png)
 <center>
     <b>Manager, but can't export submissions.</b>
 </center>
 
-![image-20220705010230911](C:\Users\vegetable1024\AppData\Roaming\Typora\typora-user-images\image-20220705010230911.png)
+---
+
+![image-20220705010230911](/img/jplag1.png)
 
 <center>
     <b>Need to further confirm the relationship between the user and the submitted code.</b>
 </center>
 
-![image-20220705010601261](C:\Users\vegetable1024\AppData\Roaming\Typora\typora-user-images\image-20220705010601261.png)
+---
+
+![image-20220705010601261](/img/jplag2.png)
 
 <center>
     <b>The relationship between the user and the submitted code is quickly confirmed.</b>
 </center>
+
+---
+
+![pre.gif](/img/pre.gif)
+
+<center>
+    <b>Presentation</b>
+</center>
+
