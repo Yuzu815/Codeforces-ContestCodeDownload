@@ -24,6 +24,10 @@ Q：比赛的代码文件会以什么方式命名便于查看？
 
 A：目前的命名方式是：`题号-题目名称-选手名称-所用语言(比赛ID#提交ID)`。需要注意的是，我只特殊处理了C/C++/Java/Python这四类使用的最多的语言，其他语言提交的代码会以`.txt`结尾，并在`所用语言`上标记为`Other`。（截图展示在最下方）
 
+Q：Github上没有类似的项目吗？我搜了一下好像很多下载脚本欸...
+
+A：Github上的脚本大部分是下载某一用户的AC代码，或者是下载测试数据，或者是爬取PDF题面。但这个是针对下载正式比赛选手代码而设计的，暂时还没看到同款。
+
 Q：好像没什么问题了...
 
 A：其实还有点小问题。这次的核心代码用`Go`进行编写，因为初上手`Go`，而且时间较赶，其中的异常处理部分，日志部分，和数据库部分都还没有完成。因此`DEBUG`可能比较辛苦...
@@ -53,6 +57,10 @@ A: You just need to put the `main.exe`  from the release into a suitable directo
 Q: In what way will the contest code files be named for easy viewing?
 
 A: The current naming scheme is: `[problem index]-[problem name]-[contestant name]-[language used]([contest ID]#[submission ID])`. Note that I have only specially handled the four most used languages, C/C++/Java/Python, and the code submitted in other languages will end with `.txt` and be marked as `Other` on the language used. (screenshots are shown at the bottom)
+
+Q: No similar projects on Github? I looked it up, and it looks like there's a lot of download scripts...
+
+A: Most of the scripts on Github are downloading a user's AC code, or downloading test data, or crawling PDF statements. But this is for downloading the official competition source code, have not yet seen the same.
 
 Q: There seems to be no more problems...
 
