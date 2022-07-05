@@ -1,5 +1,7 @@
 # Codeforces-ContestCodeDownload
 
+[Chinese readme](https://github.com/YZ-HL/Codeforces-ContestCodeDownload#q--a---chinese) | [English readme](https://github.com/YZ-HL/Codeforces-ContestCodeDownload#q--a---english)
+
 ## Q & A - Chinese
 
 <img align="center" src="img/pixiv-86374864-small.jpg" />
