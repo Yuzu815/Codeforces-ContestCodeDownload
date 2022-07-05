@@ -18,10 +18,8 @@ import (
 )
 
 func readKeyFile() (string, string, string, string) {
-	//TODO E: 文件读入检测报错
 	bytes, _ := ioutil.ReadFile("api.key")
 	fileString := string(bytes)
-	//TODO E: json文件读取可能没有对应值报错
 	jsonResult := gjson.GetMany(fileString, "apiKey", "apiSecret", "username", "password")
 	return jsonResult[0].String(), jsonResult[1].String(), jsonResult[2].String(), jsonResult[3].String()
 }
@@ -83,18 +81,16 @@ func intersectGjsonResult(resultA gjson.Result, resultB gjson.Result) []string {
 }
 
 func matchCsrfString(htmlString string) string {
-	//TODO F: 或许有更优秀的匹配CSRF的方案
 	regexCsrfFirst, _ := regexp.Compile(`<meta name="X-Csrf-Token" content="([\da-f]*)"`)
 	matchStringFirst := regexCsrfFirst.FindString(htmlString)
 	regexCsrfSecond, _ := regexp.Compile(`"([\da-f]*)"`)
 	matchStringSecond := regexCsrfSecond.FindString(matchStringFirst)
-	//TODO E: 匹配失败的错误处理未完成，可能会导致数组越界
 	return matchStringSecond[1 : len(matchStringSecond)-1]
 }
 
 func getCodeforcesHttpClient(username, password string) *http.Client {
 	cookiejarValue, _ := cookiejar.New(nil)
-	//此处可以设置Fiddler抓包地址，便于抓包
+	//Fiddler DEBUG PROXY ADDRESS
 	//DEBUG_PROXY_URL, _ := url.Parse("http://127.0.0.1:8866")
 	codeforcesHttpClient := &http.Client{
 		Jar: cookiejarValue,
@@ -104,13 +100,10 @@ func getCodeforcesHttpClient(username, password string) *http.Client {
 			},
 		*/
 	}
-	//TODO E: 异常处理未编写，暂不清楚会有什么异常
 	getCsrfRequest, _ := http.NewRequest("GET", "https://codeforces.com/enter?back=%2F", nil)
 	getCsrfRequest.Header.Add("Host", "codeforces.com")
 	getCsrfRequest.Header.Add("User-Agent", "Golang-FetchCode")
-	//TODO E: 异常处理未编写，可能发送GET请求时Codeforces崩溃，无法使用
 	getCsrfRequestRespond, _ := codeforcesHttpClient.Do(getCsrfRequest)
-	//TODO E: 关于IO的异常处理未编写
 	includedCsrfBodyData, _ := ioutil.ReadAll(getCsrfRequestRespond.Body)
 	csrfValue := matchCsrfString(string(includedCsrfBodyData))
 	postValue := url.Values{
@@ -126,7 +119,6 @@ func getCodeforcesHttpClient(username, password string) *http.Client {
 	getLoginCookieRequest.Header.Add("Host", "codeforces.com")
 	getLoginCookieRequest.Header.Add("User-Agent", "Golang-FetchCode")
 	getLoginCookieRequest.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	//TODO E: 此处未进行错误处理
 	codeforcesHttpClient.Do(getLoginCookieRequest)
 	return codeforcesHttpClient
 }
@@ -136,7 +128,6 @@ func fetchSubmissionCode(submissionURL string, manageClient *http.Client) string
 	sourceHtmlRespond, _ := manageClient.Do(getSourceCodeRequest)
 	sourceHtmlReader, _ := goquery.NewDocumentFromReader(sourceHtmlRespond.Body)
 	matchSourceCode := sourceHtmlReader.Find("#program-source-text").Text()
-	//fmt.Println(matchSourceCode)
 	return matchSourceCode
 }
 
@@ -162,22 +153,21 @@ type allNeedInformationStruct struct {
 }
 
 func saveSourceCodeToFile(sourceCode string, infoCode allNeedInformationStruct) {
-	//TODO F: 暂时只支持比较主流的语言，其他语言用Other表示，并用txt作为后缀存储
-	sufferName := ".txt"abbrLANG := "Other"
+	sufferName := ".txt"
+	abbrLANG := "Other"
 	if strings.Contains(infoCode.LANG, "C++") || strings.Contains(infoCode.LANG, "G++") || strings.Contains(infoCode.LANG, "Clang") {
 		sufferName = ".cpp"
 		abbrLANG = "C++"
 	} else if strings.Contains(infoCode.LANG, "Java") {
 		sufferName = ".java"
 		abbrLANG = "Java"
-	} else if strings.Contains(infoCode.LANG, "Python") || strings.Contains(infoCode.LANG, "Pypi"){
+	} else if strings.Contains(infoCode.LANG, "Python") || strings.Contains(infoCode.LANG, "PyPy") {
 		sufferName = ".py"
 		abbrLANG = "Python"
 	} else if strings.Contains(infoCode.LANG, "GCC") {
 		sufferName = ".c"
 		abbrLANG = "C"
 	}
-	//TODO E: 生成的文件名可能在某些操作系统是不合法的，需要设置一个排除表，对其中元素特殊编码
 	fileName := fmt.Sprintf("%s-%s-%s-%s(%d#%d)%s", infoCode.PID, infoCode.PNAME, infoCode.CNAME, abbrLANG, infoCode.CID, infoCode.ID, sufferName)
 	ioutil.WriteFile(fileName, []byte(sourceCode), 0664)
 }
@@ -188,12 +178,9 @@ result.author.participantType = "CONTESTANT"
 result.verdict = "OK",
 */
 func getAllAcceptSubmissionData(signedURL string, manageClient *http.Client) []allNeedInformationStruct {
-	//TODO E: 对Get的异常处理
 	apiData, _ := http.Get(signedURL)
-	//TODO E: 对response读取的异常处理
 	apiBytes, _ := ioutil.ReadAll(apiData.Body)
 	apiJsonString := string(apiBytes)
-	//TODO F: 寻找到gjson是否能支持多条件匹配，目前采用的是取两个Result的交集
 	allContestantResult := gjson.Get(apiJsonString, `result.#(author.participantType="CONTESTANT")#.id`)
 	allVerdictOKResult := gjson.Get(apiJsonString, `result.#(verdict="OK")#.id`)
 	allAcceptSubmissionID := intersectGjsonResult(allContestantResult, allVerdictOKResult)
