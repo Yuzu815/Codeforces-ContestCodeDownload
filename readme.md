@@ -107,3 +107,12 @@ In addition, no multi-threading has been added, so the download speed may be lim
 ![pre.gif](img/Pre.gif)
 
 
+
+## Donate
+
+If you like this project, for the author to buy a cup of coffee, please!
+
+#### WeChat QR code
+
+![WeChat](/img/donate.png)
+
