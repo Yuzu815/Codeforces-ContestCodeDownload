@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 	"io/ioutil"
 	"net/http"
@@ -50,7 +51,13 @@ func getAllAcceptSubmissionID(apiJsonString string) []string {
 }
 
 func getAPIJsonString(signedURL string) string {
-	apiData, _ := http.Get(signedURL)
+	apiData, err := http.Get(signedURL)
+	if err != nil {
+		logServer.WithFields(logrus.Fields{
+			"reason": err.Error(),
+		}).Errorln("An error occurred while geting API URL.")
+		return ""
+	}
 	apiBytes, _ := ioutil.ReadAll(apiData.Body)
 	apiJsonString := string(apiBytes)
 	return apiJsonString

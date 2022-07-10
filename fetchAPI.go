@@ -4,6 +4,7 @@ import (
 	"crypto/sha512"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	"github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 	"net/http"
 	"strconv"
@@ -48,7 +49,12 @@ func intersectGjsonResult(resultA gjson.Result, resultB gjson.Result) []string {
 
 func fetchSubmissionCode(submissionURL string, manageClient *http.Client) string {
 	getSourceCodeRequest, _ := http.NewRequest("GET", submissionURL, nil)
-	sourceHtmlRespond, _ := manageClient.Do(getSourceCodeRequest)
+	sourceHtmlRespond, err := manageClient.Do(getSourceCodeRequest)
+	if err != nil {
+		logServer.WithFields(logrus.Fields{
+			"reason": err.Error(),
+		}).Errorln("An error occurred while fetching the submission.")
+	}
 	sourceHtmlReader, _ := goquery.NewDocumentFromReader(sourceHtmlRespond.Body)
 	matchSourceCode := sourceHtmlReader.Find("#program-source-text").Text()
 	return matchSourceCode

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 	"net/http/cookiejar"
@@ -32,7 +33,13 @@ func getCodeforcesHttpClient(username, password string) *http.Client {
 	getCsrfRequest, _ := http.NewRequest("GET", "https://codeforces.com/enter?back=%2F", nil)
 	getCsrfRequest.Header.Add("Host", "codeforces.com")
 	getCsrfRequest.Header.Add("User-Agent", "Golang-FetchCode")
-	getCsrfRequestRespond, _ := codeforcesHttpClient.Do(getCsrfRequest)
+	getCsrfRequestRespond, err := codeforcesHttpClient.Do(getCsrfRequest)
+	if err != nil {
+		logServer.WithFields(logrus.Fields{
+			"reason": err.Error(),
+		}).Errorln("An error occurred while fetching the CSRF TOKEN.")
+		return nil
+	}
 	includedCsrfBodyData, _ := ioutil.ReadAll(getCsrfRequestRespond.Body)
 	csrfValue := matchCsrfString(string(includedCsrfBodyData))
 	postValue := url.Values{
@@ -48,6 +55,12 @@ func getCodeforcesHttpClient(username, password string) *http.Client {
 	getLoginCookieRequest.Header.Add("Host", "codeforces.com")
 	getLoginCookieRequest.Header.Add("User-Agent", "Golang-FetchCode")
 	getLoginCookieRequest.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	codeforcesHttpClient.Do(getLoginCookieRequest)
+	_, err = codeforcesHttpClient.Do(getLoginCookieRequest)
+	if err != nil {
+		logServer.WithFields(logrus.Fields{
+			"reason": err.Error(),
+		}).Errorln("Error when sending a POST request to simulate a login.")
+		return nil
+	}
 	return codeforcesHttpClient
 }
