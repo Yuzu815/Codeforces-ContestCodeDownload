@@ -1,135 +1,13 @@
 package main
 
 import (
-	"crypto/rand"
-	"crypto/sha512"
-	"encoding/hex"
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
 	"github.com/tidwall/gjson"
 	"io/ioutil"
 	"net/http"
-	"net/http/cookiejar"
-	"net/url"
-	"regexp"
 	"strconv"
 	"strings"
-	"time"
 )
-
-func readKeyFile() (string, string, string, string) {
-	bytes, _ := ioutil.ReadFile("api.key")
-	fileString := string(bytes)
-	jsonResult := gjson.GetMany(fileString, "apiKey", "apiSecret", "username", "password")
-	return jsonResult[0].String(), jsonResult[1].String(), jsonResult[2].String(), jsonResult[3].String()
-}
-
-func getRandomStringHex(strLen int) string {
-	if strLen <= 0 {
-		return string([]byte{})
-	}
-	var need int
-	if strLen&1 == 0 {
-		need = strLen
-	} else {
-		need = strLen + 1
-	}
-	size := need / 2
-	dst := make([]byte, need)
-	src := dst[size:]
-	if _, err := rand.Read(src[:]); err != nil {
-		return string([]byte{})
-	}
-	hex.Encode(dst, src)
-	return string(dst[:strLen])
-}
-
-/*
-If your key is xxx, secret is yyy, chosen rand is 123456, and you want to access method contest.hacks for contest 566,
-you should compose request like this:
-https://codeforces.com/api/contest.hacks?contestId=566&apiKey=xxx&time=1656689340&apiSig=123456<hash>,
-where <hash> is sha512Hex(123456/contest.hacks?apiKey=xxx&contestId=566&time=1656689340#yyy)
-Note: First six characters of the apiSig parameter can be arbitrary.
-*/
-func getSignedURL(apiKey, apiSecret, action, actionParameter string) string {
-	nowTime := strconv.FormatInt(time.Now().Unix(), 10)
-	magicStr := getRandomStringHex(6)
-	hashRaw := fmt.Sprintf("%s%sapiKey=%s&%s&time=%s#%s", magicStr, action, apiKey, actionParameter, nowTime, apiSecret)
-	sha512Bytes := sha512.Sum512([]byte(hashRaw))
-	sha512String := fmt.Sprintf("%x", sha512Bytes)
-	apiSig := magicStr + sha512String
-	signedURL := fmt.Sprintf("https://codeforces.com/api%s%s&apiKey=%s&time=%s&apiSig=%s", action, actionParameter, apiKey, nowTime, apiSig)
-	return signedURL
-}
-
-func intersectGjsonResult(resultA gjson.Result, resultB gjson.Result) []string {
-	var result []string
-	resultA.ForEach(func(_, elementA gjson.Result) bool {
-		isCount := false
-		resultB.ForEach(func(_, elementB gjson.Result) bool {
-			if elementA.String() == elementB.String() {
-				isCount = true
-			}
-			return true
-		})
-		if isCount {
-			result = append(result, elementA.String())
-		}
-		return true
-	})
-	return result
-}
-
-func matchCsrfString(htmlString string) string {
-	regexCsrfFirst, _ := regexp.Compile(`<meta name="X-Csrf-Token" content="([\da-f]*)"`)
-	matchStringFirst := regexCsrfFirst.FindString(htmlString)
-	regexCsrfSecond, _ := regexp.Compile(`"([\da-f]*)"`)
-	matchStringSecond := regexCsrfSecond.FindString(matchStringFirst)
-	return matchStringSecond[1 : len(matchStringSecond)-1]
-}
-
-func getCodeforcesHttpClient(username, password string) *http.Client {
-	cookiejarValue, _ := cookiejar.New(nil)
-	//Fiddler DEBUG PROXY ADDRESS
-	//DEBUG_PROXY_URL, _ := url.Parse("http://127.0.0.1:8866")
-	codeforcesHttpClient := &http.Client{
-		Jar: cookiejarValue,
-		/*
-			Transport: &http.Transport{
-				Proxy: http.ProxyURL(DEBUG_PROXY_URL),
-			},
-		*/
-	}
-	getCsrfRequest, _ := http.NewRequest("GET", "https://codeforces.com/enter?back=%2F", nil)
-	getCsrfRequest.Header.Add("Host", "codeforces.com")
-	getCsrfRequest.Header.Add("User-Agent", "Golang-FetchCode")
-	getCsrfRequestRespond, _ := codeforcesHttpClient.Do(getCsrfRequest)
-	includedCsrfBodyData, _ := ioutil.ReadAll(getCsrfRequestRespond.Body)
-	csrfValue := matchCsrfString(string(includedCsrfBodyData))
-	postValue := url.Values{
-		"csrf_token":    {csrfValue},
-		"action":        {"enter"},
-		"ftaa":          {getRandomStringHex(18)},
-		"bfaa":          {getRandomStringHex(32)},
-		"handleOrEmail": {username},
-		"password":      {password},
-		"_tta":          {"200"},
-	}
-	getLoginCookieRequest, _ := http.NewRequest("POST", "https://codeforces.com/enter?back=%2F", strings.NewReader(postValue.Encode()))
-	getLoginCookieRequest.Header.Add("Host", "codeforces.com")
-	getLoginCookieRequest.Header.Add("User-Agent", "Golang-FetchCode")
-	getLoginCookieRequest.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	codeforcesHttpClient.Do(getLoginCookieRequest)
-	return codeforcesHttpClient
-}
-
-func fetchSubmissionCode(submissionURL string, manageClient *http.Client) string {
-	getSourceCodeRequest, _ := http.NewRequest("GET", submissionURL, nil)
-	sourceHtmlRespond, _ := manageClient.Do(getSourceCodeRequest)
-	sourceHtmlReader, _ := goquery.NewDocumentFromReader(sourceHtmlRespond.Body)
-	matchSourceCode := sourceHtmlReader.Find("#program-source-text").Text()
-	return matchSourceCode
-}
 
 /*
 # Return Information
@@ -140,10 +18,9 @@ PNAME := result.problem.name
 CNAME := result.author.members.[name(Maybe NULL)/handle]
 LANG := result.programmingLanguage
 
-# Maybe
 fileName := PID-PNAME-CNAME-LANG(CID#ID)
 */
-type allNeedInformationStruct struct {
+type informationStruct struct {
 	ID    int64
 	CID   int64
 	PID   string
@@ -152,7 +29,7 @@ type allNeedInformationStruct struct {
 	LANG  string
 }
 
-func saveSourceCodeToFile(sourceCode string, infoCode allNeedInformationStruct) {
+func saveSourceCodeToFile(sourceCode string, infoCode informationStruct) {
 	sufferName := ".txt"
 	abbrLANG := "Other"
 	if strings.Contains(infoCode.LANG, "C++") || strings.Contains(infoCode.LANG, "G++") || strings.Contains(infoCode.LANG, "Clang") {
@@ -177,27 +54,13 @@ func saveSourceCodeToFile(sourceCode string, infoCode allNeedInformationStruct) 
 result.author.participantType = "CONTESTANT"
 result.verdict = "OK",
 */
-func getAllAcceptSubmissionData(signedURL string, manageClient *http.Client) []allNeedInformationStruct {
-	apiData, _ := http.Get(signedURL)
-	apiBytes, _ := ioutil.ReadAll(apiData.Body)
-	apiJsonString := string(apiBytes)
-	allContestantResult := gjson.Get(apiJsonString, `result.#(author.participantType="CONTESTANT")#.id`)
-	allVerdictOKResult := gjson.Get(apiJsonString, `result.#(verdict="OK")#.id`)
-	allAcceptSubmissionID := intersectGjsonResult(allContestantResult, allVerdictOKResult)
-	var allNeedInformation []allNeedInformationStruct
-	for id, s := range allAcceptSubmissionID {
-		infoForID := gjson.Get(apiJsonString, `result.#(id=`+string(s)+`)#`)
-		var temp allNeedInformationStruct
-		temp.ID = infoForID.Get(`0.id`).Int()
-		temp.CID = infoForID.Get(`0.contestId`).Int()
-		temp.PID = infoForID.Get(`0.problem.index`).String()
-		temp.PNAME = infoForID.Get(`0.problem.name`).String()
-		if infoForID.Get(`0.author.members`).Int() == 1 {
-			temp.CNAME = infoForID.Get(`0.author.members.0.handle`).String()
-		} else {
-			temp.CNAME = infoForID.Get(`0.author.members.0.name`).String()
-		}
-		temp.LANG = infoForID.Get(`0.programmingLanguage`).String()
+func getAllAcceptSubmissionData(signedURL string, manageClient *http.Client) []informationStruct {
+	apiJsonString := getAPIJsonString(signedURL)
+	allAcceptSubmissionID := getAllAcceptSubmissionID(apiJsonString)
+	var allNeedInformation []informationStruct
+	for index, submissionID := range allAcceptSubmissionID {
+		infoForID := gjson.Get(apiJsonString, `result.#(id=`+string(submissionID)+`)#`)
+		temp := parseJsonFiles(infoForID)
 		fmt.Printf("「DEBUG」 CID:%d ID:%d NAME:%s LANG:%s\n", temp.CID, temp.ID, temp.CNAME, temp.LANG)
 		var tempSourceCode string
 		if temp.CID > 100000 {
@@ -207,9 +70,16 @@ func getAllAcceptSubmissionData(signedURL string, manageClient *http.Client) []a
 		}
 		saveSourceCodeToFile(tempSourceCode, temp)
 		allNeedInformation = append(allNeedInformation, temp)
-		fmt.Printf("「DEBUG」 Loading: %d/%d\n", id+1, len(allAcceptSubmissionID))
+		fmt.Printf("「DEBUG」 Loading: %d/%d\n", index+1, len(allAcceptSubmissionID))
 	}
 	return allNeedInformation
+}
+
+func readKeyFile() (string, string, string, string) {
+	bytes, _ := ioutil.ReadFile("api.key")
+	fileString := string(bytes)
+	jsonResult := gjson.GetMany(fileString, "apiKey", "apiSecret", "username", "password")
+	return jsonResult[0].String(), jsonResult[1].String(), jsonResult[2].String(), jsonResult[3].String()
 }
 
 func main() {
