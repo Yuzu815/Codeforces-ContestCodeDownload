@@ -1,10 +1,8 @@
 package main
 
-import (
-	"github.com/gin-gonic/gin"
-)
+import "Codeforces-ContestCodeDownload/src-web/router"
 
 func main() {
-	router := gin.Default()
-	router.Run()
+	router := router.SetupRouter()
+	_ = router.Run()
 }

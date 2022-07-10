@@ -1,14 +1,13 @@
 package router
 
 import (
+	"Codeforces-ContestCodeDownload/src-web/handler"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func SetupRouter() *gin.Engine {
 	router := gin.Default()
-	router.GET("/", func(context *gin.Context) {
-		context.String(http.StatusOK, "hello gin")
-	})
+	router.LoadHTMLGlob("templates/*")
+	router.Any("/", handler.Index)
 	return router
 }
