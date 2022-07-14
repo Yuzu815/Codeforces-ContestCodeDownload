@@ -1,4 +1,5 @@
 <head>
+    <title>{{ .title }}</title>
     <link rel="stylesheet" href="/statics/css/bootstrap.min.css">
     <link rel="stylesheet" href="/statics/css/bootstrap-grid.min.css">
     <link rel="stylesheet" href="/statics/css/bootstrap-reboot.min.css">
@@ -8,25 +9,9 @@
     <script rel="script" src="/statics/js/bootstrap.bundle.js"></script>
 </head>
 <body>
-<header>
-    <div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="login-modal"
-         aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="login-modal-title">登录</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    {{ template "login-form" }}
-                </div>
-            </div>
-        </div>
-    </div>
-</header>
 <main>
-    {{ .title }}
+    <div class="modal-body">
+        {{ template "login-form" }}
+    </div>
 </main>
 </body>

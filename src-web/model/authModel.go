@@ -1,8 +1,8 @@
 package model
 
 type CodeforcesUserModel struct {
-	apiKey    string
-	apiSecret string
-	username  string
-	password  string
+	ApiKey    string
+	ApiSecret string
+	Username  string
+	Password  string
 }
