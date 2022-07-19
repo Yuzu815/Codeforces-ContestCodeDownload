@@ -3,8 +3,8 @@ package handler
 import (
 	"Codeforces-ContestCodeDownload/src-web/cores"
 	"Codeforces-ContestCodeDownload/src-web/model"
+	"fmt"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 // decryptUserData TODO F: 添加加密安全传输信息
@@ -25,21 +25,10 @@ func SaveCodeforcesConfig(context *gin.Context) {
 	}
 	//TODO F: 添加空值校验和账号密码校验（抓取登陆返回值），暂不对API KEY校验。
 	userData := decryptUserData(encryptedUserData, "123")
-	result := cores.MissionInitiated(380042, userData)
+	result := cores.MissionInitiated(381185, userData)
 	context.Set("CodeforcesResult", result)
-	context.Redirect(http.StatusMovedPermanently, "/result")
-	/*
-		fmt.Println(userData)
-
-		f, err := os.Create("file.txt")
-		if err != nil {
-			log.Fatal(err)
-		}
-		// remember to close the file
-		defer f.Close()
-		_, err = f.WriteString(userData.ApiKey + "\n")
-		if err != nil {
-			log.Fatal(err)
-		}
-	*/
+	fmt.Println(context.Value("CodeforcesResult"))
+	//TODO F: 重定向到Result界面，并尝试上下文传值
+	context.Request.URL.Path = "/test2"
+	//router.HandleContext(context)
 }

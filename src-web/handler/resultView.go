@@ -6,8 +6,8 @@ import (
 )
 
 func ResultPage(context *gin.Context) {
-	context.HTML(http.StatusOK, "index.gohtml", gin.H{
+	context.HTML(http.StatusOK, "result.gohtml", gin.H{
 		"title":      "Result Page",
-		"resultBody": context.PostForm("CodeforcesResult"),
+		"resultBody": "aaa",
 	})
 }

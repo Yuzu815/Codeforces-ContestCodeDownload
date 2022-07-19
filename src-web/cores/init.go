@@ -16,6 +16,7 @@ import (
 )
 
 var logServer = logrus.New()
+var RandomTaskName = "RandomTaskName"
 
 /*
 # Return Information
@@ -64,7 +65,7 @@ func saveSourceCodeToFile(sourceCode string, infoCode informationStruct) {
 		}).Warnln("The constructed file name may contain illegal characters that are not allowed by the operating system.")
 		fileName = newFileName
 	}
-	err := ioutil.WriteFile(fileName, []byte(sourceCode), 0664)
+	err := ioutil.WriteFile("./temp/"+RandomTaskName+"/"+fileName, []byte(sourceCode), 0664)
 	if err != nil {
 		logServer.WithFields(logrus.Fields{
 			"reason":   err.Error(),
@@ -96,7 +97,6 @@ func getAllAcceptSubmissionData(signedURL string, manageClient *http.Client) []i
 			"CNAME": temp.CNAME,
 			"LANG":  temp.LANG,
 		}).Infoln("Fetching this source...")
-		fmt.Printf("「DEBUG」 CID:%d ID:%d NAME:%s LANG:%s\n", temp.CID, temp.ID, temp.CNAME, temp.LANG)
 		var tempSourceCode string
 		if temp.CID > 100000 {
 			tempSourceCode = fetchSubmissionCode(fmt.Sprintf(`https://codeforces.com/gym/%d/submission/%d`, temp.CID, temp.ID), manageClient)
@@ -109,7 +109,6 @@ func getAllAcceptSubmissionData(signedURL string, manageClient *http.Client) []i
 			"Index":        index,
 			"SubmissionID": submissionID,
 		}).Infoln("Have fetched this source...")
-		fmt.Printf("「DEBUG」 Loading: %d/%d\n", index+1, len(allAcceptSubmissionID))
 	}
 	return allNeedInformation
 }
@@ -118,7 +117,7 @@ func initLogServer() {
 	//logrus.SetLevel(logrus.TraceLevel)
 	logServer.SetLevel(logrus.InfoLevel)
 	logServer.SetFormatter(&logrus.JSONFormatter{})
-	logfile, _ := os.OpenFile("./logrus.log", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
+	logfile, _ := os.OpenFile("./log/"+RandomTaskName+".log", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
 	if gin.Mode() == gin.DebugMode {
 		logWriters := []io.Writer{
 			logfile,
@@ -131,8 +130,22 @@ func initLogServer() {
 	}
 }
 
+func initRandomUID() {
+	RandomTaskName = getRandomStringHex(16)
+}
+
+func initTempFileDir() {
+	err := os.Mkdir("./temp/"+RandomTaskName, 0750)
+	if err != nil {
+		logServer.WithFields(logrus.Fields{
+			"error": err.Error(),
+		}).Infoln("Error in initTempFileDir...")
+	}
+}
 func MissionInitiated(contestID int, info model.CodeforcesUserModel) []informationStruct {
+	initRandomUID()
 	initLogServer()
+	initTempFileDir()
 	action := "/contest.status?"
 	actionParameter := "contestId=" + strconv.Itoa(contestID)
 	signedURL := getSignedURL(info.ApiKey, info.ApiSecret, action, actionParameter)

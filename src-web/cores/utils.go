@@ -55,7 +55,7 @@ func getAPIJsonString(signedURL string) string {
 	if err != nil {
 		logServer.WithFields(logrus.Fields{
 			"reason": err.Error(),
-		}).Errorln("An error occurred while geting API URL.")
+		}).Errorln("An error occurred while getting API URL.")
 		return ""
 	}
 	apiBytes, _ := ioutil.ReadAll(apiData.Body)
