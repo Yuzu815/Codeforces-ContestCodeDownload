@@ -15,5 +15,6 @@ func SetupRouter() *gin.Engine {
 	router.LoadHTMLGlob("templates/*")
 	router.Any("/", handler.IndexPage)
 	router.POST("/auth", handler.SaveCodeforcesConfig)
+	router.Any("/result", handler.ResultPage)
 	return router
 }

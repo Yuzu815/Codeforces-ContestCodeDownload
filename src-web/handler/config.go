@@ -1,11 +1,10 @@
 package handler
 
 import (
+	"Codeforces-ContestCodeDownload/src-web/cores"
 	"Codeforces-ContestCodeDownload/src-web/model"
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"log"
-	"os"
+	"net/http"
 )
 
 // decryptUserData TODO F: 添加加密安全传输信息
@@ -24,18 +23,23 @@ func SaveCodeforcesConfig(context *gin.Context) {
 		Username:  encryptedUsername,
 		Password:  encryptedPassword,
 	}
-	userData := decryptUserData(encryptedUserData, "123")
-	fmt.Println(userData)
-
 	//TODO F: 添加空值校验和账号密码校验（抓取登陆返回值），暂不对API KEY校验。
-	f, err := os.Create("file.txt")
-	if err != nil {
-		log.Fatal(err)
-	}
-	// remember to close the file
-	defer f.Close()
-	_, err = f.WriteString(userData.ApiKey + "\n")
-	if err != nil {
-		log.Fatal(err)
-	}
+	userData := decryptUserData(encryptedUserData, "123")
+	result := cores.MissionInitiated(380042, userData)
+	context.Set("CodeforcesResult", result)
+	context.Redirect(http.StatusMovedPermanently, "/result")
+	/*
+		fmt.Println(userData)
+
+		f, err := os.Create("file.txt")
+		if err != nil {
+			log.Fatal(err)
+		}
+		// remember to close the file
+		defer f.Close()
+		_, err = f.WriteString(userData.ApiKey + "\n")
+		if err != nil {
+			log.Fatal(err)
+		}
+	*/
 }
