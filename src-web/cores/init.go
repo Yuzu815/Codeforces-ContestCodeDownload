@@ -15,7 +15,8 @@ import (
 	"strings"
 )
 
-var logServer = logrus.New()
+// LogServer TODO F: 稍晚将日志部分抽离出来
+var LogServer = logrus.New()
 var RandomTaskName = "RandomTaskName"
 
 // InformationStruct
@@ -61,7 +62,7 @@ func saveSourceCodeToFile(sourceCode string, infoCode InformationStruct) {
 	if strings.ContainsAny(fileName, invalidChar) {
 		invalidRegexp := regexp.MustCompile(`[` + invalidChar + `]`)
 		newFileName := invalidRegexp.ReplaceAllString(fileName, "")
-		logServer.WithFields(logrus.Fields{
+		LogServer.WithFields(logrus.Fields{
 			"oldFileName": fileName,
 			"newFileName": newFileName,
 		}).Warnln("The constructed file name may contain illegal characters that are not allowed by the operating system.")
@@ -69,7 +70,7 @@ func saveSourceCodeToFile(sourceCode string, infoCode InformationStruct) {
 	}
 	err := ioutil.WriteFile("./temp/"+RandomTaskName+"/"+fileName, []byte(sourceCode), 0664)
 	if err != nil {
-		logServer.WithFields(logrus.Fields{
+		LogServer.WithFields(logrus.Fields{
 			"reason":   err.Error(),
 			"fileName": fileName,
 		}).Errorln("An error occurred while saving the fetched code to a file.")
@@ -85,7 +86,7 @@ func getAllAcceptSubmissionData(signedURL string, manageClient *http.Client) []I
 	apiJsonString := getAPIJsonString(signedURL)
 	allAcceptSubmissionID := getAllAcceptSubmissionID(apiJsonString)
 	if len(allAcceptSubmissionID) == 0 {
-		logServer.WithFields(logrus.Fields{
+		LogServer.WithFields(logrus.Fields{
 			"signedURL": signedURL,
 		}).Errorln("The list of obtained submission records is empty.")
 	}
@@ -93,7 +94,7 @@ func getAllAcceptSubmissionData(signedURL string, manageClient *http.Client) []I
 	for index, submissionID := range allAcceptSubmissionID {
 		infoForID := gjson.Get(apiJsonString, `result.#(id=`+string(submissionID)+`)#`)
 		temp := parseJsonFiles(infoForID)
-		logServer.WithFields(logrus.Fields{
+		LogServer.WithFields(logrus.Fields{
 			"CID":   temp.CID,
 			"ID":    temp.ID,
 			"CNAME": temp.CNAME,
@@ -107,7 +108,7 @@ func getAllAcceptSubmissionData(signedURL string, manageClient *http.Client) []I
 		}
 		saveSourceCodeToFile(tempSourceCode, temp)
 		allNeedInformation = append(allNeedInformation, temp)
-		logServer.WithFields(logrus.Fields{
+		LogServer.WithFields(logrus.Fields{
 			"Index":        index,
 			"SubmissionID": submissionID,
 		}).Infoln("Have fetched this source...")
@@ -117,8 +118,8 @@ func getAllAcceptSubmissionData(signedURL string, manageClient *http.Client) []I
 
 func initLogServer() {
 	//logrus.SetLevel(logrus.TraceLevel)
-	logServer.SetLevel(logrus.InfoLevel)
-	logServer.SetFormatter(&logrus.JSONFormatter{})
+	LogServer.SetLevel(logrus.InfoLevel)
+	LogServer.SetFormatter(&logrus.JSONFormatter{})
 	logfile, _ := os.OpenFile("./log/"+RandomTaskName+".log", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
 	if gin.Mode() == gin.DebugMode {
 		logWriters := []io.Writer{
@@ -126,9 +127,9 @@ func initLogServer() {
 			os.Stdout,
 		}
 		fileAndStdoutWriter := io.MultiWriter(logWriters...)
-		logServer.SetOutput(fileAndStdoutWriter)
+		LogServer.SetOutput(fileAndStdoutWriter)
 	} else {
-		logServer.SetOutput(logfile)
+		LogServer.SetOutput(logfile)
 	}
 }
 
@@ -139,7 +140,7 @@ func initRandomUID() {
 func initTempFileDir() {
 	err := os.Mkdir("./temp/"+RandomTaskName, 0750)
 	if err != nil {
-		logServer.WithFields(logrus.Fields{
+		LogServer.WithFields(logrus.Fields{
 			"error": err.Error(),
 		}).Infoln("Error in initTempFileDir...")
 	}

@@ -36,7 +36,7 @@ func getCodeforcesHttpClient(username, password string) *http.Client {
 	getCsrfRequest.Header.Add("User-Agent", "Golang-FetchCode")
 	getCsrfRequestRespond, err := codeforcesHttpClient.Do(getCsrfRequest)
 	if err != nil {
-		logServer.WithFields(logrus.Fields{
+		LogServer.WithFields(logrus.Fields{
 			"reason": err.Error(),
 		}).Errorln("An error occurred while fetching the CSRF TOKEN.")
 		return nil
@@ -58,7 +58,7 @@ func getCodeforcesHttpClient(username, password string) *http.Client {
 	getLoginCookieRequest.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	_, err = codeforcesHttpClient.Do(getLoginCookieRequest)
 	if err != nil {
-		logServer.WithFields(logrus.Fields{
+		LogServer.WithFields(logrus.Fields{
 			"reason": err.Error(),
 		}).Errorln("Error when sending a POST request to simulate a login.")
 		return nil

@@ -53,7 +53,7 @@ func getAllAcceptSubmissionID(apiJsonString string) []string {
 func getAPIJsonString(signedURL string) string {
 	apiData, err := http.Get(signedURL)
 	if err != nil {
-		logServer.WithFields(logrus.Fields{
+		LogServer.WithFields(logrus.Fields{
 			"reason": err.Error(),
 		}).Errorln("An error occurred while getting API URL.")
 		return ""

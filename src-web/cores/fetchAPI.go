@@ -51,7 +51,7 @@ func fetchSubmissionCode(submissionURL string, manageClient *http.Client) string
 	getSourceCodeRequest, _ := http.NewRequest("GET", submissionURL, nil)
 	sourceHtmlRespond, err := manageClient.Do(getSourceCodeRequest)
 	if err != nil {
-		logServer.WithFields(logrus.Fields{
+		LogServer.WithFields(logrus.Fields{
 			"reason": err.Error(),
 		}).Errorln("An error occurred while fetching the submission.")
 	}
