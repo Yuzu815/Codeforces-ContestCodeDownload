@@ -29,8 +29,8 @@ func getRandomStringHex(strLen int) string {
 	return string(dst[:strLen])
 }
 
-func parseJsonFiles(infoForID gjson.Result) informationStruct {
-	var temp informationStruct
+func parseJsonFiles(infoForID gjson.Result) InformationStruct {
+	var temp InformationStruct
 	temp.ID = infoForID.Get(`0.id`).Int()
 	temp.CID = infoForID.Get(`0.contestId`).Int()
 	temp.PID = infoForID.Get(`0.problem.index`).String()

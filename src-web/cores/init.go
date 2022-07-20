@@ -18,6 +18,7 @@ import (
 var logServer = logrus.New()
 var RandomTaskName = "RandomTaskName"
 
+// InformationStruct
 /*
 # Return Information
 ID := result.id
@@ -29,16 +30,17 @@ LANG := result.programmingLanguage
 
 fileName := PID-PNAME-CNAME-LANG(CID#ID)
 */
-type informationStruct struct {
+type InformationStruct struct {
 	ID    int64
 	CID   int64
 	PID   string
 	PNAME string
 	CNAME string
 	LANG  string
+	//TODO F: 对部分缩写进行重构
 }
 
-func saveSourceCodeToFile(sourceCode string, infoCode informationStruct) {
+func saveSourceCodeToFile(sourceCode string, infoCode InformationStruct) {
 	sufferName := ".txt"
 	abbrLANG := "Other"
 	if strings.Contains(infoCode.LANG, "C++") || strings.Contains(infoCode.LANG, "G++") || strings.Contains(infoCode.LANG, "Clang") {
@@ -79,7 +81,7 @@ func saveSourceCodeToFile(sourceCode string, infoCode informationStruct) {
 result.author.participantType = "CONTESTANT"
 result.verdict = "OK",
 */
-func getAllAcceptSubmissionData(signedURL string, manageClient *http.Client) []informationStruct {
+func getAllAcceptSubmissionData(signedURL string, manageClient *http.Client) []InformationStruct {
 	apiJsonString := getAPIJsonString(signedURL)
 	allAcceptSubmissionID := getAllAcceptSubmissionID(apiJsonString)
 	if len(allAcceptSubmissionID) == 0 {
@@ -87,7 +89,7 @@ func getAllAcceptSubmissionData(signedURL string, manageClient *http.Client) []i
 			"signedURL": signedURL,
 		}).Errorln("The list of obtained submission records is empty.")
 	}
-	var allNeedInformation []informationStruct
+	var allNeedInformation []InformationStruct
 	for index, submissionID := range allAcceptSubmissionID {
 		infoForID := gjson.Get(apiJsonString, `result.#(id=`+string(submissionID)+`)#`)
 		temp := parseJsonFiles(infoForID)
@@ -142,7 +144,9 @@ func initTempFileDir() {
 		}).Infoln("Error in initTempFileDir...")
 	}
 }
-func MissionInitiated(contestID int, info model.CodeforcesUserModel) []informationStruct {
+
+// MissionInitiated TODO F: 作为任务启动的接口，返回值格式需进行一定的修改，预期添加文件名。
+func MissionInitiated(contestID int, info model.CodeforcesUserModel) []InformationStruct {
 	initRandomUID()
 	initLogServer()
 	initTempFileDir()

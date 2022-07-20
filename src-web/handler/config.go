@@ -12,7 +12,7 @@ func decryptUserData(encryptedInformation model.CodeforcesUserModel, decryptedKe
 	return encryptedInformation
 }
 
-func SaveCodeforcesConfig(context *gin.Context) {
+func CodeforcesUserAuth(context *gin.Context) {
 	encryptedApiKey := context.PostForm("apiKey")
 	encryptedApiSecret := context.PostForm("apiSecret")
 	encryptedUsername := context.PostForm("usernameOrEmail")
@@ -28,7 +28,7 @@ func SaveCodeforcesConfig(context *gin.Context) {
 	result := cores.MissionInitiated(381185, userData)
 	context.Set("CodeforcesResult", result)
 	fmt.Println(context.Value("CodeforcesResult"))
-	//TODO F: 重定向到Result界面，并尝试上下文传值
-	context.Request.URL.Path = "/test2"
-	//router.HandleContext(context)
+	//TODO F: 重定向到result界面，并尝试上下文传值
+	context.Request.URL.Path = "/result"
+	context.Next()
 }

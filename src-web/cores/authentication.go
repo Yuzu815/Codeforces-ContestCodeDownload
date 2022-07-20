@@ -22,13 +22,14 @@ func getCodeforcesHttpClient(username, password string) *http.Client {
 	cookiejarValue, _ := cookiejar.New(nil)
 	//Fiddler DEBUG PROXY ADDRESS
 	//DEBUG_PROXY_URL, _ := url.Parse("http://127.0.0.1:8866")
+	ACCELERATE_PROXY_URL, _ := url.Parse("http://127.0.0.1:44444")
 	codeforcesHttpClient := &http.Client{
 		Jar: cookiejarValue,
-		/*
-			Transport: &http.Transport{
-				Proxy: http.ProxyURL(DEBUG_PROXY_URL),
-			},
-		*/
+		///*
+		Transport: &http.Transport{
+			Proxy: http.ProxyURL(ACCELERATE_PROXY_URL),
+		},
+		//*/
 	}
 	getCsrfRequest, _ := http.NewRequest("GET", "https://codeforces.com/enter?back=%2F", nil)
 	getCsrfRequest.Header.Add("Host", "codeforces.com")
