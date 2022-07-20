@@ -146,13 +146,19 @@ func initTempFileDir() {
 	}
 }
 
-// MissionInitiated TODO F: 作为任务启动的接口，返回值格式需进行一定的修改，预期添加文件名。
-func MissionInitiated(contestID int, info model.CodeforcesUserModel) []InformationStruct {
+// MissionInitiated 只用来初始化当前的任务
+func MissionInitiated() {
 	initRandomUID()
 	initLogServer()
-	initTempFileDir()
+	//initTempFileDir()
+}
+
+// MissionStart TODO F: 作为任务启动的接口，返回值格式需进行一定的修改，预期添加文件名。
+func MissionStart(contestID int, info model.CodeforcesUserModel) []InformationStruct {
 	action := "/contest.status?"
 	actionParameter := "contestId=" + strconv.Itoa(contestID)
 	signedURL := getSignedURL(info.ApiKey, info.ApiSecret, action, actionParameter)
-	return getAllAcceptSubmissionData(signedURL, getCodeforcesHttpClient(info.Username, info.Password))
+	//TODO F: 对返回的loginRespond进行检查
+	httpClient, _ := GetCodeforcesHttpClient(info.Username, info.Password)
+	return getAllAcceptSubmissionData(signedURL, httpClient)
 }

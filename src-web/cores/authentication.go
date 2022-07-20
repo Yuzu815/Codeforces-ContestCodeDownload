@@ -18,16 +18,17 @@ func matchCsrfString(htmlString string) string {
 	return matchStringSecond[1 : len(matchStringSecond)-1]
 }
 
-func getCodeforcesHttpClient(username, password string) *http.Client {
+func GetCodeforcesHttpClient(username, password string) (*http.Client, *http.Response) {
 	cookiejarValue, _ := cookiejar.New(nil)
 	//Fiddler DEBUG PROXY ADDRESS
-	//DEBUG_PROXY_URL, _ := url.Parse("http://127.0.0.1:8866")
-	ACCELERATE_PROXY_URL, _ := url.Parse("http://127.0.0.1:44444")
+	DEBUG_PROXY_URL, _ := url.Parse("http://127.0.0.1:8866")
+	//ACCELERATE_PROXY_URL, _ := url.Parse("http://127.0.0.1:44444")
 	codeforcesHttpClient := &http.Client{
 		Jar: cookiejarValue,
 		///*
 		Transport: &http.Transport{
-			Proxy: http.ProxyURL(ACCELERATE_PROXY_URL),
+			//Proxy: http.ProxyURL(ACCELERATE_PROXY_URL),
+			Proxy: http.ProxyURL(DEBUG_PROXY_URL),
 		},
 		//*/
 	}
@@ -39,7 +40,7 @@ func getCodeforcesHttpClient(username, password string) *http.Client {
 		LogServer.WithFields(logrus.Fields{
 			"reason": err.Error(),
 		}).Errorln("An error occurred while fetching the CSRF TOKEN.")
-		return nil
+		return nil, nil
 	}
 	includedCsrfBodyData, _ := ioutil.ReadAll(getCsrfRequestRespond.Body)
 	csrfValue := matchCsrfString(string(includedCsrfBodyData))
@@ -56,12 +57,12 @@ func getCodeforcesHttpClient(username, password string) *http.Client {
 	getLoginCookieRequest.Header.Add("Host", "codeforces.com")
 	getLoginCookieRequest.Header.Add("User-Agent", "Golang-FetchCode")
 	getLoginCookieRequest.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	_, err = codeforcesHttpClient.Do(getLoginCookieRequest)
+	loginRespond, err := codeforcesHttpClient.Do(getLoginCookieRequest)
 	if err != nil {
 		LogServer.WithFields(logrus.Fields{
 			"reason": err.Error(),
 		}).Errorln("Error when sending a POST request to simulate a login.")
-		return nil
+		return nil, nil
 	}
-	return codeforcesHttpClient
+	return codeforcesHttpClient, loginRespond
 }
