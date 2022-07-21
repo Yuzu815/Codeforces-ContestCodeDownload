@@ -113,6 +113,7 @@ func getAllAcceptSubmissionData(signedURL string, manageClient *http.Client) []I
 			"SubmissionID": submissionID,
 		}).Infoln("Have fetched this source...")
 	}
+	ZipCompress("./temp/"+RandomTaskName, "./temp/"+RandomTaskName)
 	return allNeedInformation
 }
 

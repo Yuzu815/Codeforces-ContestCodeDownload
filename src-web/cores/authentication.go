@@ -22,14 +22,14 @@ func GetCodeforcesHttpClient(username, password string) (*http.Client, *http.Res
 	cookiejarValue, _ := cookiejar.New(nil)
 	//Fiddler DEBUG PROXY ADDRESS
 	//TODO E: 添加网络检查，代理连接可能会失败，需处理
-	DEBUG_PROXY_URL, _ := url.Parse("http://127.0.0.1:8866")
-	//ACCELERATE_PROXY_URL, _ := url.Parse("http://127.0.0.1:44444")
+	//DEBUG_PROXY_URL, _ := url.Parse("http://127.0.0.1:8866")
+	ACCELERATE_PROXY_URL, _ := url.Parse("http://127.0.0.1:44444")
 	codeforcesHttpClient := &http.Client{
 		Jar: cookiejarValue,
 		///*
 		Transport: &http.Transport{
-			//Proxy: http.ProxyURL(ACCELERATE_PROXY_URL),
-			Proxy: http.ProxyURL(DEBUG_PROXY_URL),
+			Proxy: http.ProxyURL(ACCELERATE_PROXY_URL),
+			//Proxy: http.ProxyURL(DEBUG_PROXY_URL),
 		},
 		//*/
 	}

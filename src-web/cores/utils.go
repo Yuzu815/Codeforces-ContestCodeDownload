@@ -1,12 +1,17 @@
 package cores
 
 import (
+	"archive/zip"
 	"crypto/rand"
 	"encoding/hex"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
+	"io"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
 )
 
 func getRandomStringHex(strLen int) string {
@@ -61,4 +66,33 @@ func getAPIJsonString(signedURL string) string {
 	apiBytes, _ := ioutil.ReadAll(apiData.Body)
 	apiJsonString := string(apiBytes)
 	return apiJsonString
+}
+
+// ZipCompress
+// Copy from https://studygolang.com/articles/34943
+func ZipCompress(srcDir string, zipFileName string) {
+	zipFileName = zipFileName + ".zip"
+	zipFile, _ := os.Create(zipFileName)
+	defer zipFile.Close()
+	archive := zip.NewWriter(zipFile)
+	defer archive.Close()
+	filepath.Walk(srcDir, func(path string, info os.FileInfo, _ error) error {
+		if path == srcDir {
+			return nil
+		}
+		header, _ := zip.FileInfoHeader(info)
+		header.Name = strings.TrimPrefix(path, srcDir+`/`)
+		if info.IsDir() {
+			header.Name += `/`
+		} else {
+			header.Method = zip.Deflate
+		}
+		writer, _ := archive.CreateHeader(header)
+		if !info.IsDir() {
+			file, _ := os.Open(path)
+			defer file.Close()
+			io.Copy(writer, file)
+		}
+		return nil
+	})
 }
