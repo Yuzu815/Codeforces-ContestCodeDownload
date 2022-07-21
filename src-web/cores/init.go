@@ -113,7 +113,7 @@ func getAllAcceptSubmissionData(signedURL string, manageClient *http.Client) []I
 			"SubmissionID": submissionID,
 		}).Infoln("Have fetched this source...")
 	}
-	ZipCompress("./temp/"+RandomTaskName, "./temp/"+RandomTaskName)
+	ZipCompress("./temp/"+RandomTaskName, RandomTaskName)
 	return allNeedInformation
 }
 
@@ -151,7 +151,7 @@ func initTempFileDir() {
 func MissionInitiated() {
 	initRandomUID()
 	initLogServer()
-	//initTempFileDir()
+	initTempFileDir()
 }
 
 // MissionStart TODO F: 作为任务启动的接口，返回值格式需进行一定的修改，预期添加文件名。
