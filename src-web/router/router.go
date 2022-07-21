@@ -17,5 +17,6 @@ func SetupRouter() *gin.Engine {
 	router.Any("/result", handler.ResultPage)
 	//TODO F: 优化掉Set，Value的传递方法
 	router.POST("/auth", handler.CodeforcesUserAuth, handler.ResultPage)
+	router.Any("/process", handler.GetTask)
 	return router
 }
