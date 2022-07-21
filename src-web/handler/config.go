@@ -28,27 +28,26 @@ func CodeforcesUserAuth(context *gin.Context) {
 		Username:  encryptedUsername,
 		Password:  encryptedPassword,
 	}
-	//TODO F: 添加空值校验和账号密码校验（抓取登陆返回值），暂不对API KEY校验。
+	//TODO F: 添加空值校验，账号密码校验已添加，未对API KET做校验
 	userData := decryptUserData(encryptedUserData, "123")
-	//fmt.Println("1112222222")
 	if checkLoginStatus(cores.GetCodeforcesHttpClient(userData.Username, userData.Password)) == false {
-		//fmt.Println("111222333")
-		cores.LogServer.Errorln("Login fail. Please check your username and password.")
+		context.Redirect(http.StatusMovedPermanently, "?err=logErr")
 		context.Abort()
-		return
+		cores.LogServer.Errorln("Login fail. Please check your username and password.")
+	} else {
+		cores.LogServer.WithFields(logrus.Fields{
+			"ApiKey":   userData.ApiKey,
+			"Username": userData.Username,
+		}).Info("Have access to user information.")
+		contestID := 381185
+		result := cores.MissionStart(contestID, userData)
+		cores.LogServer.WithFields(logrus.Fields{
+			"contestID":  contestID,
+			"jsonResult": result,
+		}).Info("Source code and record correspondence information has been obtained from codeforces.")
+		context.Set("CodeforcesResult", result)
+		context.Next()
 	}
-	cores.LogServer.WithFields(logrus.Fields{
-		"ApiKey":   userData.ApiKey,
-		"Username": userData.Username,
-	}).Info("Have access to user information.")
-	contestID := 381185
-	result := cores.MissionStart(contestID, userData)
-	cores.LogServer.WithFields(logrus.Fields{
-		"contestID":  contestID,
-		"jsonResult": result,
-	}).Info("Source code and record correspondence information has been obtained from codeforces.")
-	context.Set("CodeforcesResult", result)
-	context.Next()
 }
 
 //TODO F: 或许将这一检查写成client, error会更合适。
