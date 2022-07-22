@@ -13,12 +13,13 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 // LogServer TODO F: 稍晚将日志部分抽离出来
 var LogServer = logrus.New()
 var RandomTaskName = "RandomTaskName"
-var PROCESS = map[string]float64{}
+var PROCESS = sync.Map{}
 
 // InformationStruct
 /*
@@ -114,7 +115,7 @@ func getAllAcceptSubmissionData(signedURL string, manageClient *http.Client) []I
 			"SubmissionID": submissionID,
 		}).Infoln("Have fetched this source...")
 		//TODO F: 此处使用全局变量来计算，后期需修正
-		PROCESS[RandomTaskName] = float64(index+1) / float64(len(allAcceptSubmissionID))
+		PROCESS.Store(RandomTaskName, float64(index+1)/float64(len(allAcceptSubmissionID)))
 	}
 	ZipCompress("./temp/"+RandomTaskName, RandomTaskName)
 	return allNeedInformation
@@ -155,7 +156,7 @@ func MissionInitiated() {
 	initRandomUID()
 	initLogServer()
 	initTempFileDir()
-	PROCESS = make(map[string]float64)
+	PROCESS.Store(RandomTaskName, 0.0)
 }
 
 // MissionStart TODO F: 作为任务启动的接口，返回值格式需进行一定的修改，预期添加文件名。

@@ -3,13 +3,16 @@ package handler
 import (
 	"Codeforces-ContestCodeDownload/src-web/cores"
 	"encoding/json"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 func ResultPage(context *gin.Context) {
-	fmt.Println(context.Value("CodeforcesResult"))
+	for true {
+		if context.Value("CodeforcesResult") != nil {
+			break
+		}
+	}
 	temp := context.Value("CodeforcesResult").([]cores.InformationStruct)
 	//TODO E: json错误解析处理
 	aLittleJson, _ := json.Marshal(temp)

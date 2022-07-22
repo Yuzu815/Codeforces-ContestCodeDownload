@@ -1,19 +1,29 @@
 <head>
-    <title>{{ .title }}</title>
-    <link rel="stylesheet" href="/statics/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/statics/css/bootstrap-grid.min.css">
-    <link rel="stylesheet" href="/statics/css/bootstrap-reboot.min.css">
-    <link href="/favicon.ico" rel="icon"/>
-    <script src="/statics/js/jquery.min.js" rel="script"></script>
-    <script src="/statics/js/Popper.js" rel="script"></script>
-    <script rel="script" src="/statics/js/bootstrap.bundle.js"></script>
 </head>
 <body>
 <main>
     <script>
-        window.timer = setInterval(() => {
-            setTimeout(axios.get('/process'), 0)
-        }, 1000)
+        function httpGetTest() {
+            const url = '/process';
+            const xmlHttpRequest = new XMLHttpRequest();
+            xmlHttpRequest.responseType = "text";
+            xmlHttpRequest.open('GET', url);
+            xmlHttpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;")
+            xmlHttpRequest.send();
+            xmlHttpRequest.onreadystatechange = function (e) {
+                if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) {
+                    const responseText = xmlHttpRequest.responseText;
+                    const processBarDiv = document.getElementById("processBarInfo");
+                    processBarDiv.innerHTML = responseText;
+                    const processBarDivJson = JSON.parse(responseText)
+                    if (processBarDivJson.taskProcess === "1") {
+                        clearInterval(intervalID)
+                    }
+                }
+            };
+        }
+        const intervalID = setInterval("httpGetTest()", "1000");
     </script>
+    <p id="processBarInfo"> Init... </p>
 </main>
 </body>

@@ -3,6 +3,7 @@ package handler
 import (
 	"Codeforces-ContestCodeDownload/src-web/cores"
 	"Codeforces-ContestCodeDownload/src-web/model"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
@@ -62,4 +63,5 @@ func testTask(userData model.CodeforcesUserModel, context *gin.Context) {
 		"jsonResult": result,
 	}).Info("Source code and record correspondence information has been obtained from codeforces.")
 	context.Set("CodeforcesResult", result)
+	fmt.Println(context.Value("CodeforcesResult"))
 }

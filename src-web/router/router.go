@@ -15,9 +15,12 @@ func SetupRouter() *gin.Engine {
 	router.Static("/statics", "./statics")
 	router.LoadHTMLGlob("templates/*")
 	router.Any("/", handler.IndexPage)
-	router.Any("/result", handler.ResultPage)
+	//router.Any("/result", handler.ResultPage)
 	//TODO F: 优化掉Set，Value的传递方法
 	router.POST("/auth", handler.CodeforcesUserAuth, handler.QueryPage, handler.ResultPage)
 	router.Any("/process", handler.GetTask)
+
+	//router.Any("/result", handler.QueryPage, handler.ResultPage)
+	router.Any("/result", handler.QueryPage)
 	return router
 }
