@@ -12,6 +12,7 @@
 <main>
     <script>
         function httpGetTest() {
+            const eps = 1e-8
             const url = '/process';
             const xmlHttpRequest = new XMLHttpRequest();
             xmlHttpRequest.responseType = "text";
@@ -27,7 +28,7 @@
                     processBarDiv.style.width = processBarDivJson.taskProcess + "%";
                     tempDebug.innerHTML = responseText
                     processBarDiv.innerHTML = processBarDivJson.taskProcess.substring(0, 4) + "%"
-                    if (processBarDivJson.taskProcess === "1") {
+                    if (parseFloat(processBarDivJson.taskProcess) - 100 <= eps) {
                         clearInterval(intervalID)
                     }
                 }

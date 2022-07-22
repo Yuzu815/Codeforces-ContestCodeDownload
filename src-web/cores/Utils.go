@@ -4,7 +4,6 @@ import (
 	"archive/zip"
 	"crypto/rand"
 	"encoding/hex"
-	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 	"io"
@@ -99,10 +98,9 @@ func ZipCompress(srcDir string, zipFileName string) {
 
 // resolveFileName \folder1\folder2\folder3\xxx.cpp -> xxx.cpp
 func resolveFileName(fileName string) string {
-	len := len(fileName) - 1
-	fmt.Println(fileName)
-	for fileName[len] != '\\' {
-		len--
+	length := len(fileName) - 1
+	for fileName[length] != '\\' {
+		length--
 	}
-	return fileName[len+1:]
+	return fileName[length+1:]
 }
