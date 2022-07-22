@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"crypto/rand"
 	"encoding/hex"
+	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 	"io"
@@ -11,7 +12,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
 func getRandomStringHex(strLen int) string {
@@ -81,10 +81,10 @@ func ZipCompress(srcDir string, zipFileName string) {
 			return nil
 		}
 		header, _ := zip.FileInfoHeader(info)
-		header.Name = strings.TrimPrefix(path, srcDir+`/`)
 		if info.IsDir() {
 			header.Name += `/`
 		} else {
+			header.Name = resolveFileName(path)
 			header.Method = zip.Deflate
 		}
 		writer, _ := archive.CreateHeader(header)
@@ -95,4 +95,14 @@ func ZipCompress(srcDir string, zipFileName string) {
 		}
 		return nil
 	})
+}
+
+// resolveFileName \folder1\folder2\folder3\xxx.cpp -> xxx.cpp
+func resolveFileName(fileName string) string {
+	len := len(fileName) - 1
+	fmt.Println(fileName)
+	for fileName[len] != '\\' {
+		len--
+	}
+	return fileName[len+1:]
 }
