@@ -1,4 +1,12 @@
 <head>
+    <title>{{ .title }}</title>
+    <link rel="stylesheet" href="/statics/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/statics/css/bootstrap-grid.min.css">
+    <link rel="stylesheet" href="/statics/css/bootstrap-reboot.min.css">
+    <link href="/favicon.ico" rel="icon"/>
+    <script src="/statics/js/jquery.min.js" rel="script"></script>
+    <script src="/statics/js/Popper.js" rel="script"></script>
+    <script rel="script" src="/statics/js/bootstrap.bundle.js"></script>
 </head>
 <body>
 <main>
@@ -14,8 +22,10 @@
                 if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) {
                     const responseText = xmlHttpRequest.responseText;
                     const processBarDiv = document.getElementById("processBarInfo");
-                    processBarDiv.innerHTML = responseText;
+                    const tempDebug = document.getElementById("tempDebug");
                     const processBarDivJson = JSON.parse(responseText)
+                    processBarDiv.style.width = processBarDivJson.taskProcess + "%";
+                    tempDebug.innerHTML = responseText
                     if (processBarDivJson.taskProcess === "1") {
                         clearInterval(intervalID)
                     }
@@ -24,6 +34,12 @@
         }
         const intervalID = setInterval("httpGetTest()", "1000");
     </script>
-    <p id="processBarInfo"> Init... </p>
+    <p id="tempDebug"> Init... </p>
+    <div class="progress">
+        <div id="processBarInfo" class="progress-bar progress-striped" role="progressbar" aria-valuenow="70" aria-valuemin="0"
+             aria-valuemax="100" style="width:0%">
+            Crawling code...
+        </div>
+    </div>
 </main>
 </body>
