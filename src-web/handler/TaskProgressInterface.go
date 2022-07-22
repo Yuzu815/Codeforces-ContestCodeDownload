@@ -7,8 +7,10 @@ import (
 	"strconv"
 )
 
-// GetTask TODO F: 使用更为优雅的方式来传递参数，而不是字符串互相转化。后期添加多用户支持。
-func GetTask(context *gin.Context) {
+// GetProgressInterface
+// TODO F: 使用更为优雅的方式来传递参数，而不是字符串互相转化。
+// TODO F: 目前使用全局变量，后期添加多用户支持。
+func GetProgressInterface(context *gin.Context) {
 	val, _ := cores.PROCESS.Load(cores.RandomTaskName)
 	if val == nil {
 		context.JSON(http.StatusOK, gin.H{

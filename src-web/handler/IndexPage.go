@@ -14,7 +14,7 @@ func parseErrInfo(err string) string {
 }
 
 func IndexPage(context *gin.Context) {
-	context.HTML(http.StatusOK, "index.gohtml", gin.H{
+	context.HTML(http.StatusOK, "Index.gohtml", gin.H{
 		"title": "Login Page",
 		"error": parseErrInfo(context.Query("err")),
 	})
