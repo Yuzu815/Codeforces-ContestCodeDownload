@@ -39,13 +39,7 @@ func CodeforcesUserAuth(context *gin.Context) {
 			"ApiKey":   userData.ApiKey,
 			"Username": userData.Username,
 		}).Info("Have access to user information.")
-		contestID := 381185
-		result := cores.MissionStart(contestID, userData)
-		cores.LogServer.WithFields(logrus.Fields{
-			"contestID":  contestID,
-			"jsonResult": result,
-		}).Info("Source code and record correspondence information has been obtained from codeforces.")
-		context.Set("CodeforcesResult", result)
+		go testTask(userData, context)
 		context.Next()
 	}
 }
@@ -58,4 +52,14 @@ func checkLoginStatus(client *http.Client, response *http.Response) bool {
 		return false
 	}
 	return true
+}
+
+func testTask(userData model.CodeforcesUserModel, context *gin.Context) {
+	contestID := 381185
+	result := cores.MissionStart(contestID, userData)
+	cores.LogServer.WithFields(logrus.Fields{
+		"contestID":  contestID,
+		"jsonResult": result,
+	}).Info("Source code and record correspondence information has been obtained from codeforces.")
+	context.Set("CodeforcesResult", result)
 }
