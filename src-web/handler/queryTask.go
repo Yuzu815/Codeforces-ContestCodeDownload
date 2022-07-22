@@ -7,5 +7,4 @@ import (
 
 func QueryPage(context *gin.Context) {
 	context.HTML(http.StatusOK, "querypage.gohtml", gin.H{})
-	//context.Next()
 }

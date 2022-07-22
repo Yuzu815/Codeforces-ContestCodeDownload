@@ -8,11 +8,6 @@ import (
 )
 
 func ResultPage(context *gin.Context) {
-	for true {
-		if context.Value("CodeforcesResult") != nil {
-			break
-		}
-	}
 	temp := context.Value("CodeforcesResult").([]cores.InformationStruct)
 	//TODO E: json错误解析处理
 	aLittleJson, _ := json.Marshal(temp)

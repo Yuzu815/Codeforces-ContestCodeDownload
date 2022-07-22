@@ -33,7 +33,6 @@ func CodeforcesUserAuth(context *gin.Context) {
 	userData := decryptUserData(encryptedUserData, "123")
 	if checkLoginStatus(cores.GetCodeforcesHttpClient(userData.Username, userData.Password)) == false {
 		context.Redirect(http.StatusMovedPermanently, "?err=logErr")
-		context.Abort()
 		cores.LogServer.Errorln("Login fail. Please check your username and password.")
 	} else {
 		cores.LogServer.WithFields(logrus.Fields{
@@ -41,7 +40,7 @@ func CodeforcesUserAuth(context *gin.Context) {
 			"Username": userData.Username,
 		}).Info("Have access to user information.")
 		go testTask(userData, context)
-		context.Next()
+		context.Redirect(http.StatusMovedPermanently, "/result")
 	}
 }
 
