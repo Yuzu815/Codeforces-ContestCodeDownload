@@ -16,10 +16,13 @@ import (
 	"sync"
 )
 
-// LogServer TODO F: 稍晚将日志部分抽离出来
+// LogServer TODO F: 稍晚将日志部分抽离出来，并日志中应能返回对应的函数名
 var LogServer = logrus.New()
 var RandomTaskName = "RandomTaskName"
 var PROCESS = sync.Map{}
+
+// CodeforcesContestResult TODO F: 后期使用结构体封装，改造为定时删除数据
+var CodeforcesContestResult = sync.Map{}
 
 // InformationStruct
 /*

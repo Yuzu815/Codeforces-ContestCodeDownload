@@ -26,15 +26,16 @@ func CodeforcesUserAuth(context *gin.Context) {
 	//TODO F: 添加空值校验。账号密码校验已添加，未对API KET做校验
 	userData := decryptUserData(encryptedUserData, "123")
 	if checkLoginStatus(cores.GetCodeforcesHttpClient(userData.Username, userData.Password)) == false {
-		context.Redirect(http.StatusMovedPermanently, "?err=logErr")
+		context.Redirect(http.StatusSeeOther, "?err=logErr")
 		cores.LogServer.Errorln("Login fail. Please check your username and password.")
 	} else {
 		cores.LogServer.WithFields(logrus.Fields{
 			"ApiKey":   userData.ApiKey,
 			"Username": userData.Username,
 		}).Info("Have access to user information.")
-		go fetchContestData(userData, context)
-		context.Redirect(http.StatusMovedPermanently, "/result")
+		contextCopy := context.Copy()
+		go fetchContestData(userData, contextCopy)
+		context.Redirect(http.StatusSeeOther, "/result")
 	}
 }
 
@@ -53,7 +54,7 @@ func decryptUserData(encryptedInformation model.CodeforcesUserModel, decryptedKe
 	return encryptedInformation
 }
 
-// fetchContestData TODO F: 目前采用抽离函数并发执行的方式，未知*gin.Context是否会受影响
+// fetchContestData TODO F: 已改用全局MAP方案，后期需实现将每一context都绑定上一个randomID
 func fetchContestData(userData model.CodeforcesUserModel, context *gin.Context) {
 	contestID := 381185
 	result := cores.MissionStart(contestID, userData)
@@ -61,5 +62,5 @@ func fetchContestData(userData model.CodeforcesUserModel, context *gin.Context) 
 		"contestID":  contestID,
 		"jsonResult": result,
 	}).Info("Source code and record correspondence information has been obtained from codeforces.")
-	context.Set("CodeforcesResult", result)
+	cores.CodeforcesContestResult.Store(cores.RandomTaskName, result)
 }

@@ -30,6 +30,7 @@
                     processBarDiv.innerHTML = processBarDivJson.taskProcess.substring(0, 4) + "%"
                     if (100.0 - parseFloat(processBarDivJson.taskProcess) <= eps) {
                         clearInterval(intervalID)
+                        window.location.replace("/download");
                     }
                 }
             };

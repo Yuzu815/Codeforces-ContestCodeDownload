@@ -5,15 +5,29 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"time"
 )
 
 func ResultPage(context *gin.Context) {
-	temp := context.Value("CodeforcesResult").([]cores.InformationStruct)
+	checkTaskProcess()
+	missionVal, missionOk := cores.CodeforcesContestResult.Load(cores.RandomTaskName)
+	for missionOk == false {
+		missionVal, missionOk = cores.CodeforcesContestResult.Load(cores.RandomTaskName)
+	}
 	//TODO E: json错误解析处理
-	aLittleJson, _ := json.Marshal(temp)
+	missionResultJson, _ := json.Marshal(missionVal.([]cores.InformationStruct))
 	//TODO F: 后端提供结构，实时返回进度，实现进度条&日志返回
 	context.HTML(http.StatusOK, "ResultPage.gohtml", gin.H{
 		"title":      "Result Page",
-		"resultBody": string(aLittleJson),
+		"resultBody": string(missionResultJson),
 	})
+}
+
+func checkTaskProcess() {
+	processVal, processOk := cores.PROCESS.Load(cores.RandomTaskName)
+	for processOk == false || processVal.(float64) < 1.0 {
+		//TODO F: 后期进行修正，不考虑硬写入时间的方案
+		time.Sleep(time.Second)
+		processVal, processOk = cores.PROCESS.Load(cores.RandomTaskName)
+	}
 }
