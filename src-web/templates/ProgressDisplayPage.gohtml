@@ -28,7 +28,7 @@
                     processBarDiv.style.width = processBarDivJson.taskProcess + "%";
                     tempDebug.innerHTML = responseText
                     processBarDiv.innerHTML = processBarDivJson.taskProcess.substring(0, 4) + "%"
-                    if (parseFloat(processBarDivJson.taskProcess) - 100 <= eps) {
+                    if (100.0 - parseFloat(processBarDivJson.taskProcess) <= eps) {
                         clearInterval(intervalID)
                     }
                 }
