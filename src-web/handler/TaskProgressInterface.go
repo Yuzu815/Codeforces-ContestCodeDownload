@@ -19,8 +19,8 @@ func GetProgressInterface(context *gin.Context) {
 	} else {
 		taskProgress := strconv.FormatFloat((val.(float64))*100, 'f', -1, 64)
 		context.JSON(http.StatusOK, gin.H{
-			"UID":         cores.RandomTaskName,
-			"taskProcess": taskProgress,
+			"UID":                    cores.RandomTaskName,
+			"CurrentMissionProgress": taskProgress,
 		})
 	}
 }

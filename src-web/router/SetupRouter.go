@@ -18,6 +18,7 @@ func SetupRouter() *gin.Engine {
 	//router.Any("/result", handler.ResultPage)
 	//TODO F: 优化掉Set，Value的传递方法
 	router.POST("/auth", handler.CodeforcesUserAuth)
+	//TODO F: 为Context添加超时功能，若某一页面被人挂起可能会导致通道缓冲区满阻塞崩溃
 	router.Any("/process", handler.GetProgressInterface)
 	//router.Any("/result", handler.ProgressDisplay, handler.ResultPage)
 	router.Any("/result", handler.ProgressDisplay)

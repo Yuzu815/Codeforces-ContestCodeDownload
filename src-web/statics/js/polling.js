@@ -16,7 +16,8 @@ function polling(){
             tempDebug.innerHTML = responseText
             processBarDiv.innerHTML = processBarDivJson.taskProcess.substring(0, 4) + "%"
             if (100.0 - parseFloat(processBarDivJson.taskProcess) <= eps) {
-                clearInterval(intervalID)
+                clearInterval(intervalID);
+                alert("Mission accomplished. Close the window will redirect you to the code zip download page.");
                 window.location.replace("/download");
             }
         }

@@ -4,7 +4,7 @@
     <!-- bootstrap -->
     <link rel="stylesheet" href="/statics/css/bootstrap.min.css">
     <link rel="stylesheet" href="/statics/css/bootstrap-grid.min.css">
-    <link rel="stylesheet" href="/statics/css/bootstrap-reboot.min.css">
+    <link rel="stylesheet" href="/statics/css/bootstrap-reboot.min.ss">
     <script src="https://code.jquery.com/jquery-3.6.0.js" rel="script"></script>
     <script src="https://unpkg.com/@popperjs/core@2.11.5/dist/umd/popper.min.js" rel="script"></script>
     <!-- polling task AND websocket -->
@@ -13,12 +13,15 @@
     <!-- highlight.js -->
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/default.min.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+    <script >hljs.initHighlightingOnLoad();</script>
 </head>
 <body>
 <main>
     <div class="d-flex flex-column min-vh-70 min-vw-70">
         <div class="d-flex flex-column flex-grow-1 justify-content-center align-items-center">
-            <p id="tempDebug"> Init... </p>
+            <div class="alert alert-info" role="alert" style="width:70%">
+                Interface invocations: <b id="tempDebug"></b>
+            </div>
             <div class="progress" style="width:70%">
                 <div id="processBarInfo" class="progress-bar progress-bar-striped bg-success" role="progressbar"
                      aria-valuenow="70"
