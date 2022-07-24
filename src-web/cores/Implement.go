@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"regexp"
-	"strconv"
 	"strings"
 )
 
@@ -45,7 +44,7 @@ func saveSourceCodeToFile(sourceCode string, infoCode InformationStruct) {
 	} else if strings.Contains(infoCode.LANG, "Python") || strings.Contains(infoCode.LANG, "PyPy") {
 		sufferName = ".py"
 		abbrLANG = "Python"
-	} else if strings.Contains(infoCode.LANG, "GCC") {
+	} else if strings.Contains(infoCode.LANG, "GCC") || strings.Contains(infoCode.LANG, "C11") {
 		sufferName = ".c"
 		abbrLANG = "C"
 	}
@@ -86,22 +85,22 @@ func getAllAcceptSubmissionData(signedURL string, manageClient *http.Client) []I
 	taskLogMapRef, _ := TaskMessageChan.Load(RandomTaskName)
 	for index, submissionID := range allAcceptSubmissionID {
 		infoForID := gjson.Get(apiJsonString, `result.#(id=`+string(submissionID)+`)#`)
-		temp := parseJsonFiles(infoForID)
+		infoStruct := parseJsonFiles(infoForID)
 		LogServer.WithFields(logrus.Fields{
-			"CID":   temp.CID,
-			"ID":    temp.ID,
-			"CNAME": temp.CNAME,
-			"LANG":  temp.LANG,
+			"CID":   infoStruct.CID,
+			"ID":    infoStruct.ID,
+			"CNAME": infoStruct.CNAME,
+			"LANG":  infoStruct.LANG,
 		}).Infoln("Fetching this source...")
-		taskLogMapRef.(chan string) <- "[DEBUG] " + strconv.FormatInt(temp.CID, 10) + "#" + strconv.FormatInt(temp.ID, 10) + "#" + temp.CNAME + "#" + temp.LANG
+		taskLogMapRef.(chan string) <- realtimeLogStr(infoStruct)
 		var tempSourceCode string
-		if temp.CID > 100000 {
-			tempSourceCode = fetchSubmissionCode(fmt.Sprintf(`https://codeforces.com/gym/%d/submission/%d`, temp.CID, temp.ID), manageClient)
+		if infoStruct.CID > 100000 {
+			tempSourceCode = fetchSubmissionCode(fmt.Sprintf(`https://codeforces.com/gym/%d/submission/%d`, infoStruct.CID, infoStruct.ID), manageClient)
 		} else {
-			tempSourceCode = fetchSubmissionCode(fmt.Sprintf(`https://codeforces.com/contest/%d/submission/%d`, temp.CID, temp.ID), manageClient)
+			tempSourceCode = fetchSubmissionCode(fmt.Sprintf(`https://codeforces.com/contest/%d/submission/%d`, infoStruct.CID, infoStruct.ID), manageClient)
 		}
-		saveSourceCodeToFile(tempSourceCode, temp)
-		allNeedInformation = append(allNeedInformation, temp)
+		saveSourceCodeToFile(tempSourceCode, infoStruct)
+		allNeedInformation = append(allNeedInformation, infoStruct)
 		LogServer.WithFields(logrus.Fields{
 			"Index":        index,
 			"SubmissionID": submissionID,
@@ -112,4 +111,8 @@ func getAllAcceptSubmissionData(signedURL string, manageClient *http.Client) []I
 	taskLogMapRef.(chan string) <- ResultIsEnd
 	ZipCompress("./temp/"+RandomTaskName, "./temp/"+RandomTaskName)
 	return allNeedInformation
+}
+
+func realtimeLogStr(jsonResult InformationStruct) string {
+	return fmt.Sprintf("[Info] CID:%d ID:%d CNAME:%s LANG:%s\n", jsonResult.CID, jsonResult.ID, jsonResult.CNAME, jsonResult.LANG)
 }

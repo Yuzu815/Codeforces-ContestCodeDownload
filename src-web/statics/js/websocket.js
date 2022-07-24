@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", event => {
-    const showDom = document.querySelector('#txtShow')
-    const url = 'ws://localhost:8080/realtime_ws'
-    const ws = new WebSocket(url);
+    const url = '/realtime_ws'
+    const ws = new WebSocket(wsURL(url));
     ws.onopen = () => {
         console.log('open connection')
     }
@@ -9,11 +8,15 @@ document.addEventListener("DOMContentLoaded", event => {
         console.log('close connection');
     }
     ws.onmessage = event => {
-        let txt = event.data
-        if (showDom.innerHTML === "NULL") {
-            showDom.innerHTML = txt
-        } else {
-            showDom.innerHTML = showDom.innerHTML + "\n" + txt
-        }
+        const result = event.data
+        const logViewer = document.getElementById('logViewer')
+        logViewer.innerHTML = logViewer.innerHTML + result
     }
 });
+
+
+//Copy from https://www.itranslater.com/qa/details/2123328733623878656
+function wsURL(s) {
+    const l = window.location;
+    return ((l.protocol === "https:") ? "wss://" : "ws://") + l.hostname + (((l.port != 80) && (l.port != 443)) ? ":" + l.port : "") + l.pathname + s;
+}

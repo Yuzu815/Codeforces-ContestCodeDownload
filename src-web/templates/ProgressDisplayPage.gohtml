@@ -1,15 +1,18 @@
 <head>
     <title>{{ .title }}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- bootstrap -->
     <link rel="stylesheet" href="/statics/css/bootstrap.min.css">
     <link rel="stylesheet" href="/statics/css/bootstrap-grid.min.css">
     <link rel="stylesheet" href="/statics/css/bootstrap-reboot.min.css">
-    <link href="/favicon.ico" rel="icon"/>
-    <script src="/statics/js/jquery.min.js" rel="script"></script>
-    <script src="/statics/js/Popper.js" rel="script"></script>
-    <script src="/statics/js/Popper.js" rel="script"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js" rel="script"></script>
+    <script src="https://unpkg.com/@popperjs/core@2.11.5/dist/umd/popper.min.js" rel="script"></script>
     <!-- polling task AND websocket -->
     <script src="/statics/js/polling.js" rel="script"></script>
     <script src="/statics/js/websocket.js" rel="script"></script>
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
 </head>
 <body>
 <main>
@@ -24,8 +27,15 @@
                     init...
                 </div>
             </div>
-            <div id="txtShow"> NULL </div>
         </div>
     </div>
+    <div class="d-flex flex-column min-vh-70 min-vw-70">
+        <div class="d-flex flex-column flex-grow-1 justify-content-center align-items-center">
+            <div style="height:80%;width:70%;overflow:auto;border-radius:10px;background-color:#f0f0f4;margin-top: 30px">
+                <pre><code id="logViewer"></code></pre>
+            </div>
+        </div>
+    </div>
+    <label for="rawData"></label><textarea id="rawData" style="display: none"></textarea>
 </main>
 </body>
