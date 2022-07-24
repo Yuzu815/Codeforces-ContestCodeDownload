@@ -20,6 +20,7 @@ var CodeforcesContestResult = sync.Map{}
 
 // TaskMessageChan TODO F: 将每一ID映射为一个通道，需实现定期删除
 var TaskMessageChan = sync.Map{}
+var ResultIsEnd = "RESULT_IS_END"
 
 func initLogServer() {
 	//logrus.SetLevel(logrus.TraceLevel)

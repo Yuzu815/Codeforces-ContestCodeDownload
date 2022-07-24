@@ -14,7 +14,7 @@ var httpUpgrade = websocket.Upgrader{
 	},
 }
 
-func WS_realTimeInfo(context *gin.Context) {
+func WebSocketTestInterface(context *gin.Context) {
 	ws, _ := httpUpgrade.Upgrade(context.Writer, context.Request, nil)
 	defer ws.Close()
 	for {
@@ -37,5 +37,26 @@ func WS_realTimeInfo(context *gin.Context) {
 			resultMessage = <-missionMapLogRef.(chan string)
 		}
 		ws.WriteMessage(messageType, []byte(resultMessage))
+	}
+}
+
+func WebSocketRealTimeInfo(context *gin.Context) {
+	ws, _ := httpUpgrade.Upgrade(context.Writer, context.Request, nil)
+	defer ws.Close()
+	for {
+		var resultMessage string
+		missionMapLogRef, OK := cores.TaskMessageChan.Load(cores.RandomTaskName)
+		for OK == false {
+			missionMapLogRef, OK = cores.TaskMessageChan.Load(cores.RandomTaskName)
+			continue
+		}
+		for {
+			if len(missionMapLogRef.(chan string)) > 0 {
+				resultMessage, _ = <-missionMapLogRef.(chan string)
+				ws.WriteMessage(websocket.TextMessage, []byte(resultMessage))
+			} else {
+				break
+			}
+		}
 	}
 }

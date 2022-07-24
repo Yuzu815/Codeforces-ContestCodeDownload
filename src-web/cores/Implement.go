@@ -83,6 +83,7 @@ func getAllAcceptSubmissionData(signedURL string, manageClient *http.Client) []I
 		}).Errorln("The list of obtained submission records is empty.")
 	}
 	var allNeedInformation []InformationStruct
+	taskLogMapRef, _ := TaskMessageChan.Load(RandomTaskName)
 	for index, submissionID := range allAcceptSubmissionID {
 		infoForID := gjson.Get(apiJsonString, `result.#(id=`+string(submissionID)+`)#`)
 		temp := parseJsonFiles(infoForID)
@@ -92,7 +93,6 @@ func getAllAcceptSubmissionData(signedURL string, manageClient *http.Client) []I
 			"CNAME": temp.CNAME,
 			"LANG":  temp.LANG,
 		}).Infoln("Fetching this source...")
-		taskLogMapRef, _ := TaskMessageChan.Load(RandomTaskName)
 		taskLogMapRef.(chan string) <- "[DEBUG] " + strconv.FormatInt(temp.CID, 10) + "#" + strconv.FormatInt(temp.ID, 10) + "#" + temp.CNAME + "#" + temp.LANG
 		var tempSourceCode string
 		if temp.CID > 100000 {
@@ -109,6 +109,7 @@ func getAllAcceptSubmissionData(signedURL string, manageClient *http.Client) []I
 		//TODO F: 此处使用全局变量来计算，后期需修正
 		PROCESS.Store(RandomTaskName, float64(index+1)/float64(len(allAcceptSubmissionID)))
 	}
+	taskLogMapRef.(chan string) <- ResultIsEnd
 	ZipCompress("./temp/"+RandomTaskName, "./temp/"+RandomTaskName)
 	return allNeedInformation
 }

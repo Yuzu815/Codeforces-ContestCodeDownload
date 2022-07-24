@@ -41,6 +41,9 @@ func CodeforcesUserAuth(context *gin.Context) {
 
 // checkLoginStatus TODO F: 或许将这一检查写成client, error会更合适。
 func checkLoginStatus(client *http.Client, response *http.Response) bool {
+	if response == nil {
+		return false
+	}
 	body, _ := ioutil.ReadAll(response.Body)
 	if strings.Contains(string(body), "Invalid handle/email or password") ||
 		strings.Contains(string(body), "Please, confirm email before entering the website.") {

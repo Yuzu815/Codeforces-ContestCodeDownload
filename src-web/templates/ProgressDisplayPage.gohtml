@@ -6,47 +6,25 @@
     <link href="/favicon.ico" rel="icon"/>
     <script src="/statics/js/jquery.min.js" rel="script"></script>
     <script src="/statics/js/Popper.js" rel="script"></script>
-    <script rel="script" src="/statics/js/bootstrap.bundle.js"></script>
+    <script src="/statics/js/Popper.js" rel="script"></script>
+    <!-- polling task AND websocket -->
+    <script src="/statics/js/polling.js" rel="script"></script>
+    <script src="/statics/js/websocket.js" rel="script"></script>
 </head>
 <body>
 <main>
-    <script>
-        function httpGetTest() {
-            const eps = 1e-8
-            const url = '/process';
-            const xmlHttpRequest = new XMLHttpRequest();
-            xmlHttpRequest.responseType = "text";
-            xmlHttpRequest.open('GET', url);
-            xmlHttpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;")
-            xmlHttpRequest.send();
-            xmlHttpRequest.onreadystatechange = function (e) {
-                if (xmlHttpRequest.readyState == 4 && xmlHttpRequest.status == 200) {
-                    const responseText = xmlHttpRequest.responseText;
-                    const processBarDiv = document.getElementById("processBarInfo");
-                    const tempDebug = document.getElementById("tempDebug");
-                    const processBarDivJson = JSON.parse(responseText)
-                    processBarDiv.style.width = processBarDivJson.taskProcess + "%";
-                    tempDebug.innerHTML = responseText
-                    processBarDiv.innerHTML = processBarDivJson.taskProcess.substring(0, 4) + "%"
-                    if (100.0 - parseFloat(processBarDivJson.taskProcess) <= eps) {
-                        clearInterval(intervalID)
-                        window.location.replace("/download");
-                    }
-                }
-            };
-        }
-        const intervalID = setInterval("httpGetTest()", "1000");
-    </script>
     <div class="d-flex flex-column min-vh-70 min-vw-70">
         <div class="d-flex flex-column flex-grow-1 justify-content-center align-items-center">
             <p id="tempDebug"> Init... </p>
             <div class="progress" style="width:70%">
-                <div id="processBarInfo" class="progress-bar progress-bar-striped bg-success" role="progressbar" aria-valuenow="70"
+                <div id="processBarInfo" class="progress-bar progress-bar-striped bg-success" role="progressbar"
+                     aria-valuenow="70"
                      aria-valuemin="0"
                      aria-valuemax="100" style="width:0%">
                     init...
                 </div>
             </div>
+            <div id="txtShow"> NULL </div>
         </div>
     </div>
 </main>
