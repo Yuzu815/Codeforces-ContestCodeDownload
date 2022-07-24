@@ -22,5 +22,6 @@ func SetupRouter() *gin.Engine {
 	//router.Any("/result", handler.ProgressDisplay, handler.ResultPage)
 	router.Any("/result", handler.ProgressDisplay)
 	router.Any("/download", handler.ResultPage)
+	router.Any("/download/:TASK_UID", handler.ResultDownload)
 	return router
 }
