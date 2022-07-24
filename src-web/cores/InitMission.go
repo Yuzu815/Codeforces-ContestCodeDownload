@@ -76,5 +76,9 @@ func MissionCall(contestID int, info model.CodeforcesUserModel) []InformationStr
 	signedURL := getSignedURL(info.ApiKey, info.ApiSecret, action, actionParameter)
 	//TODO F: 对返回的loginRespond进行检查
 	httpClient, _ := GetCodeforcesHttpClient(info.Username, info.Password)
+	// TODO E: 某些时候CSRF匹配失败时，程序会崩溃，需做特殊处理，此處直接返回簡單處理下。
+	if httpClient == nil {
+		return nil
+	}
 	return getAllAcceptSubmissionData(signedURL, httpClient)
 }

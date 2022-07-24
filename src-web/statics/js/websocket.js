@@ -10,7 +10,9 @@ document.addEventListener("DOMContentLoaded", event => {
     ws.onmessage = event => {
         const result = event.data
         const logViewer = document.getElementById('logViewer')
+        var logViewerDiv = document.getElementById("logViewerDiv")
         logViewer.innerHTML = logViewer.innerHTML + result
+        logViewerDiv.scrollTop=logViewerDiv.scrollHeight
     }
 });
 
