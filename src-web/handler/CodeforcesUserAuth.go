@@ -57,7 +57,7 @@ func decryptUserData(encryptedInformation model.CodeforcesUserModel, decryptedKe
 // fetchContestData TODO F: 已改用全局MAP方案，后期需实现将每一context都绑定上一个randomID
 func fetchContestData(userData model.CodeforcesUserModel, context *gin.Context) {
 	contestID := 381185
-	result := cores.MissionStart(contestID, userData)
+	result := cores.MissionCall(contestID, userData)
 	cores.LogServer.WithFields(logrus.Fields{
 		"contestID":  contestID,
 		"jsonResult": result,
