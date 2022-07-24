@@ -18,6 +18,9 @@ var PROCESS = sync.Map{}
 // CodeforcesContestResult TODO F: 后期使用结构体封装，改造为定时删除数据
 var CodeforcesContestResult = sync.Map{}
 
+// TaskMessageChan TODO F: 将每一ID映射为一个通道，需实现定期删除
+var TaskMessageChan = sync.Map{}
+
 func initLogServer() {
 	//logrus.SetLevel(logrus.TraceLevel)
 	LogServer.SetLevel(logrus.InfoLevel)
@@ -48,12 +51,21 @@ func initTempFileDir() {
 	}
 }
 
+func initMessageChan() {
+	TaskMessageChan.Store(RandomTaskName, make(chan string))
+}
+
+func initProcessInterface() {
+	PROCESS.Store(RandomTaskName, 0.0)
+}
+
 // MissionInitiated 只用来初始化当前的任务
 func MissionInitiated() {
 	initRandomUID()
 	initLogServer()
 	initTempFileDir()
-	PROCESS.Store(RandomTaskName, 0.0)
+	initMessageChan()
+	initProcessInterface()
 }
 
 // MissionCall TODO F: 作为任务启动的接口，返回值格式需进行一定的修改，预期添加文件名。

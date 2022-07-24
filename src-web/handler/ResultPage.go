@@ -18,8 +18,9 @@ func ResultPage(context *gin.Context) {
 	missionResultJson, _ := json.Marshal(missionVal.([]cores.InformationStruct))
 	//TODO F: 后端提供结构，实时返回进度，实现进度条&日志返回
 	context.HTML(http.StatusOK, "ResultPage.gohtml", gin.H{
-		"title":      "Result Page",
-		"resultBody": string(missionResultJson),
+		"title":          "Result Page",
+		"resultBody":     string(missionResultJson),
+		"RandomTaskName": cores.RandomTaskName,
 	})
 }
 
