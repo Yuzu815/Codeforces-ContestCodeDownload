@@ -52,7 +52,7 @@ func initTempFileDir() {
 }
 
 func initMessageChan() {
-	TaskMessageChan.Store(RandomTaskName, make(chan string))
+	TaskMessageChan.Store(RandomTaskName, make(chan string, 100))
 }
 
 func initProcessInterface() {

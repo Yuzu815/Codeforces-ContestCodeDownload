@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -91,6 +92,8 @@ func getAllAcceptSubmissionData(signedURL string, manageClient *http.Client) []I
 			"CNAME": temp.CNAME,
 			"LANG":  temp.LANG,
 		}).Infoln("Fetching this source...")
+		taskLogMapRef, _ := TaskMessageChan.Load(RandomTaskName)
+		taskLogMapRef.(chan string) <- "[DEBUG] " + strconv.FormatInt(temp.CID, 10) + "#" + strconv.FormatInt(temp.ID, 10) + "#" + temp.CNAME + "#" + temp.LANG
 		var tempSourceCode string
 		if temp.CID > 100000 {
 			tempSourceCode = fetchSubmissionCode(fmt.Sprintf(`https://codeforces.com/gym/%d/submission/%d`, temp.CID, temp.ID), manageClient)

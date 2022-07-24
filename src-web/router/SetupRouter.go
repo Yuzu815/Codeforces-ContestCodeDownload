@@ -23,5 +23,6 @@ func SetupRouter() *gin.Engine {
 	router.Any("/result", handler.ProgressDisplay)
 	router.Any("/download", handler.ResultPage)
 	router.Any("/download/:TASK_UID", handler.ResultDownload)
+	router.Any("/realtime_ws", handler.WS_realTimeInfo)
 	return router
 }
