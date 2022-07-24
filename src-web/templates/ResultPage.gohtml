@@ -9,7 +9,17 @@
 </head>
 <body>
 <main>
-    {{ .resultBody }}
-    <a href="/download/{{ .RandomTaskName }}"><button>Download the zip archive</button></a>
+    <div class="d-flex flex-column min-vh-70 min-vw-70">
+        <div class="d-flex flex-column flex-grow-1 justify-content-center align-items-center">
+            <div class="alert alert-success" role="alert" style="width:70%">
+                &#128512;
+                Mission accomplished!
+                Please click the button below to download the code for the official player of that match!
+            </div>
+            <a href="/download/{{ .RandomTaskName }}">
+                <button type="button" class="btn btn-primary btn-lg">Download the zip archive</button>
+            </a>
+        </div>
+    </div>
 </main>
 </body>

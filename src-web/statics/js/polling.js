@@ -12,10 +12,11 @@ function polling(){
             const processBarDiv = document.getElementById("processBarInfo");
             const tempDebug = document.getElementById("tempDebug");
             const processBarDivJson = JSON.parse(responseText)
-            processBarDiv.style.width = processBarDivJson.taskProcess + "%";
+            processBarDiv.style.width = processBarDivJson.CurrentMissionProgress + "%";
             tempDebug.innerHTML = responseText
-            processBarDiv.innerHTML = processBarDivJson.taskProcess.substring(0, 4) + "%"
-            if (100.0 - parseFloat(processBarDivJson.taskProcess) <= eps) {
+            console.log(processBarDivJson.CurrentMissionProgress )
+            processBarDiv.innerHTML = processBarDivJson.CurrentMissionProgress.substring(0, 4) + "%"
+            if (100.0 - parseFloat(processBarDivJson.CurrentMissionProgress) <= eps) {
                 clearInterval(intervalID);
                 alert("Mission accomplished. Close the window will redirect you to the code zip download page.");
                 window.location.replace("/download");

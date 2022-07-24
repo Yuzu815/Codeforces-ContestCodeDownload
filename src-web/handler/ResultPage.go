@@ -2,7 +2,6 @@ package handler
 
 import (
 	"Codeforces-ContestCodeDownload/src-web/cores"
-	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
@@ -10,16 +9,9 @@ import (
 
 func ResultPage(context *gin.Context) {
 	checkTaskProcess()
-	missionVal, missionOk := cores.CodeforcesContestResult.Load(cores.RandomTaskName)
-	for missionOk == false {
-		missionVal, missionOk = cores.CodeforcesContestResult.Load(cores.RandomTaskName)
-	}
-	//TODO E: json错误解析处理
-	missionResultJson, _ := json.Marshal(missionVal.([]cores.InformationStruct))
 	//TODO F: 后端提供结构，实时返回进度，实现进度条&日志返回
 	context.HTML(http.StatusOK, "ResultPage.gohtml", gin.H{
 		"title":          "Result Page",
-		"resultBody":     string(missionResultJson),
 		"RandomTaskName": cores.RandomTaskName,
 	})
 }
