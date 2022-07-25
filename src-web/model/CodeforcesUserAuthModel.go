@@ -5,4 +5,5 @@ type CodeforcesUserModel struct {
 	ApiSecret string
 	Username  string
 	Password  string
+	ContestID string
 }

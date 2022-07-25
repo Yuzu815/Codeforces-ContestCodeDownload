@@ -62,7 +62,7 @@ func getAllAcceptSubmissionData(signedURL, randomUID string, manageClient *http.
 		}).Errorln("The list of obtained submission records is empty.")
 	}
 	var allNeedInformation []model.InformationStruct
-	taskLogMapRef, _ := TaskMessageChan.Load(randomUID)
+	missionLogMapRef, _ := TaskMessageChan.Load(randomUID)
 	for index, submissionID := range allAcceptSubmissionID {
 		infoForID := gjson.Get(apiJsonString, `result.#(id=`+string(submissionID)+`)#`)
 		infoStruct := parseJsonFiles(infoForID)
@@ -72,7 +72,7 @@ func getAllAcceptSubmissionData(signedURL, randomUID string, manageClient *http.
 			"CNAME": infoStruct.CNAME,
 			"LANG":  infoStruct.LANG,
 		}).Infoln("Fetching this source...")
-		taskLogMapRef.(chan string) <- realtimeLogStr(infoStruct)
+		missionLogMapRef.(chan string) <- realtimeLogStr(infoStruct)
 		var tempSourceCode string
 		if infoStruct.CID > 100000 {
 			tempSourceCode = fetchSubmissionCode(fmt.Sprintf(`https://codeforces.com/gym/%d/submission/%d`, infoStruct.CID, infoStruct.ID), randomUID, manageClient)
@@ -88,7 +88,7 @@ func getAllAcceptSubmissionData(signedURL, randomUID string, manageClient *http.
 		//TODO F: 此处使用全局变量来计算，后期需修正
 		MissionProgressMap.Store(randomUID, float64(index+1)/float64(len(allAcceptSubmissionID)))
 	}
-	taskLogMapRef.(chan string) <- RESULT_IS_END_FLAG
+	missionLogMapRef.(chan string) <- RESULT_IS_END_FLAG
 	ZipCompress("./temp/"+randomUID, "./temp/"+randomUID, randomUID)
 	return allNeedInformation
 }

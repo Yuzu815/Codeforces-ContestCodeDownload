@@ -8,6 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -52,11 +53,13 @@ func decryptUserData(context *gin.Context, UID string, decryptedKey any) model.C
 	encryptedApiSecret := context.PostForm("apiSecret")
 	encryptedUsername := context.PostForm("usernameOrEmail")
 	encryptedPassword := context.PostForm("password")
+	encryptedContestID := context.PostForm("CID")
 	encryptedUserData := model.CodeforcesUserModel{
 		ApiKey:    encryptedApiKey,
 		ApiSecret: encryptedApiSecret,
 		Username:  encryptedUsername,
 		Password:  encryptedPassword,
+		ContestID: encryptedContestID,
 	}
 	//TODO F: 添加空值校验
 	return encryptedUserData
@@ -64,7 +67,10 @@ func decryptUserData(context *gin.Context, UID string, decryptedKey any) model.C
 
 // fetchContestData TODO F: 已改用全局MAP方案，后期需实现将每一context都绑定上一个randomID
 func fetchContestData(userData model.CodeforcesUserModel, randomUID string) {
-	contestID := 380042
+	contestID, err := strconv.Atoi(userData.ContestID)
+	if err != nil {
+		logMode.GetLogMap(randomUID).Errorln(err.Error())
+	}
 	cores.MissionCall(contestID, randomUID, userData)
 	logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
 		"contestID": contestID,

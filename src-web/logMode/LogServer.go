@@ -11,27 +11,35 @@ import (
 // logServerMap TODO F: 稍晚将日志部分抽离出来，并日志中应能返回对应的函数名
 var logServerMap = sync.Map{}
 
-func InitLogServer(randomTaskUID string) {
+func InitLogServer(randomUID string) {
 	logServer := logrus.New()
-	logServer.SetLevel(logrus.InfoLevel)
-	logServer.SetFormatter(&logrus.JSONFormatter{})
 	logServer.SetReportCaller(true)
-	logfile, _ := os.OpenFile("./log/"+randomTaskUID+".log", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
+	logServer.SetFormatter(&logrus.JSONFormatter{})
+	logfile, _ := os.OpenFile("./log/"+randomUID+".log", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
+	logCollection, _ := os.OpenFile("./log/logCollection.log", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
+	prefixUIDHook := &prefixHook{UID: randomUID}
+	logServer.AddHook(prefixUIDHook)
 	if gin.Mode() == gin.DebugMode {
 		logWriters := []io.Writer{
 			logfile,
+			logCollection,
 			os.Stdout,
 		}
 		fileAndStdoutWriter := io.MultiWriter(logWriters...)
 		logServer.SetOutput(fileAndStdoutWriter)
 	} else {
-		logServer.SetOutput(logfile)
+		logWriters := []io.Writer{
+			logfile,
+			logCollection,
+		}
+		fileAndStdoutWriter := io.MultiWriter(logWriters...)
+		logServer.SetOutput(fileAndStdoutWriter)
 	}
-	logServerMap.Store(randomTaskUID, logServer)
+	logServerMap.Store(randomUID, logServer)
 }
 
-func GetLogMap(randomTaskID string) *logrus.Logger {
-	logServer, OK := logServerMap.Load(randomTaskID)
+func GetLogMap(randomUID string) *logrus.Logger {
+	logServer, OK := logServerMap.Load(randomUID)
 	if OK == false {
 		return nil
 	} else {
@@ -39,11 +47,11 @@ func GetLogMap(randomTaskID string) *logrus.Logger {
 	}
 }
 
-func GetLogMapWithBool(randomTaskID any, isOK bool) *logrus.Logger {
+func GetLogMapWithBool(randomUID any, isOK bool) *logrus.Logger {
 	if isOK == false {
 		return nil
 	}
-	logServer, OK := logServerMap.Load(randomTaskID)
+	logServer, OK := logServerMap.Load(randomUID)
 	if OK == false {
 		return nil
 	} else {
