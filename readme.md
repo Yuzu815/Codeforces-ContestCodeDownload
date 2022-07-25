@@ -5,6 +5,8 @@
 ## UPDATE 2022.07.25
 ✌ The first web version has been released, written on the Gin, and can be deployed on any machine you like! [Download it now!](https://github.com/Yuzu815/Codeforces-ContestCodeDownload/releases/latest)
 
+Demo: You can choose the rear any site: &emsp; 🤠[Site A](https://accelerate-cf-demo.webdisk.online) &ensp; | &ensp; 🧐[Site B](https://cf-demo.webdisk.online).
+
 <img align="center" src="img/WebDownload.png" />
 
 ## Q & A - English
