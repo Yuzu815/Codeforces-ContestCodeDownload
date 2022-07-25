@@ -119,7 +119,14 @@ A：其实还有点小问题。这次的核心代码用`Go`进行编写，因为
 
 If you like this project, for the author to buy a cup of coffee, please!
 
-#### WeChat QR code
+### TON
+
+**ton://transfer/EQCeDSzxHt06YSFRJ644-T3jS_qL46SH2S4Gnlp96yt2dAtq**
+
+![TON Address](https://raw.githubusercontent.com/Yuzu815/Codeforces-ContestCodeDownload/769dec60def806cc8c03887da09f72fafc9f1556/TON%20QR.png)
+
+### WeChat QR code
 
 ![WeChat](/img/donate.png)
+
 
