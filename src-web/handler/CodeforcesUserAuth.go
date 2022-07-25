@@ -16,7 +16,7 @@ func CodeforcesUserAuth(context *gin.Context) {
 	randomUID := cores.MissionInitiated()
 	cookieDomain := getSiteDomain(context.Request.Header.Get("Referer"))
 	context.SetCookie("UID", randomUID, 86400, "/", cookieDomain, false, true)
-	userData := decryptUserData(context.Copy(), nil)
+	userData := decryptUserData(context.Copy(), randomUID, nil)
 	if checkLoginStatus(cores.GetCodeforcesHttpClient(userData.Username, userData.Password, randomUID)) == false {
 		context.Redirect(http.StatusSeeOther, "?err=logErr")
 		logMode.GetLogMap(randomUID).Errorln("Login fail. Please check your username and password.")
@@ -44,8 +44,7 @@ func checkLoginStatus(client *http.Client, response *http.Response) bool {
 }
 
 // decryptUserData TODO F: 添加加密安全传输信息
-func decryptUserData(context *gin.Context, decryptedKey any) model.CodeforcesUserModel {
-	UID, _ := context.Cookie("UID")
+func decryptUserData(context *gin.Context, UID string, decryptedKey any) model.CodeforcesUserModel {
 	if decryptedKey == nil {
 		logMode.GetLogMap(UID).Infoln("Encryption and decryption not enabled")
 	}
