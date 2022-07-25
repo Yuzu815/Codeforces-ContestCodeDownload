@@ -1,6 +1,7 @@
 package cores
 
 import (
+	"Codeforces-ContestCodeDownload/src-web/logMode"
 	"crypto/sha512"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
@@ -51,7 +52,7 @@ func fetchSubmissionCode(submissionURL string, manageClient *http.Client) string
 	getSourceCodeRequest, _ := http.NewRequest("GET", submissionURL, nil)
 	sourceHtmlRespond, err := manageClient.Do(getSourceCodeRequest)
 	if err != nil {
-		LogServer.WithFields(logrus.Fields{
+		logMode.GetLogMap(RandomTaskName).WithFields(logrus.Fields{
 			"reason": err.Error(),
 		}).Errorln("An error occurred while fetching the submission.")
 	}

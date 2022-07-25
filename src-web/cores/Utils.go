@@ -1,6 +1,7 @@
 package cores
 
 import (
+	"Codeforces-ContestCodeDownload/src-web/logMode"
 	"archive/zip"
 	"crypto/rand"
 	"encoding/hex"
@@ -57,7 +58,7 @@ func getAllAcceptSubmissionID(apiJsonString string) []string {
 func getAPIJsonString(signedURL string) string {
 	apiData, err := http.Get(signedURL)
 	if err != nil {
-		LogServer.WithFields(logrus.Fields{
+		logMode.GetLogMap(RandomTaskName).WithFields(logrus.Fields{
 			"reason": err.Error(),
 		}).Errorln("An error occurred while getting API URL.")
 		return ""

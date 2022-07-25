@@ -2,6 +2,7 @@ package handler
 
 import (
 	"Codeforces-ContestCodeDownload/src-web/cores"
+	"Codeforces-ContestCodeDownload/src-web/logMode"
 	"Codeforces-ContestCodeDownload/src-web/model"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -27,9 +28,9 @@ func CodeforcesUserAuth(context *gin.Context) {
 	userData := decryptUserData(encryptedUserData, "123")
 	if checkLoginStatus(cores.GetCodeforcesHttpClient(userData.Username, userData.Password)) == false {
 		context.Redirect(http.StatusSeeOther, "?err=logErr")
-		cores.LogServer.Errorln("Login fail. Please check your username and password.")
+		logMode.GetLogMap(cores.RandomTaskName).Errorln("Login fail. Please check your username and password.")
 	} else {
-		cores.LogServer.WithFields(logrus.Fields{
+		logMode.GetLogMap(cores.RandomTaskName).WithFields(logrus.Fields{
 			"ApiKey":   userData.ApiKey,
 			"Username": userData.Username,
 		}).Info("Have access to user information.")
@@ -61,7 +62,7 @@ func decryptUserData(encryptedInformation model.CodeforcesUserModel, decryptedKe
 func fetchContestData(userData model.CodeforcesUserModel, context *gin.Context) {
 	contestID := 380042
 	result := cores.MissionCall(contestID, userData)
-	cores.LogServer.WithFields(logrus.Fields{
+	logMode.GetLogMap(cores.RandomTaskName).WithFields(logrus.Fields{
 		"contestID":  contestID,
 		"jsonResult": result,
 	}).Info("Source code and record correspondence information has been obtained from codeforces.")

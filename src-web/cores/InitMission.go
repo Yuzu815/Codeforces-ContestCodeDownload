@@ -1,17 +1,14 @@
 package cores
 
 import (
+	"Codeforces-ContestCodeDownload/src-web/logMode"
 	"Codeforces-ContestCodeDownload/src-web/model"
-	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"io"
 	"os"
 	"strconv"
 	"sync"
 )
 
-// LogServer TODO F: 稍晚将日志部分抽离出来，并日志中应能返回对应的函数名
-var LogServer = logrus.New()
 var RandomTaskName = "RandomTaskName"
 var PROCESS = sync.Map{}
 
@@ -22,23 +19,6 @@ var CodeforcesContestResult = sync.Map{}
 var TaskMessageChan = sync.Map{}
 var ResultIsEnd = "RESULT_IS_END"
 
-func initLogServer() {
-	//logrus.SetLevel(logrus.TraceLevel)
-	LogServer.SetLevel(logrus.InfoLevel)
-	LogServer.SetFormatter(&logrus.JSONFormatter{})
-	logfile, _ := os.OpenFile("./log/"+RandomTaskName+".log", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
-	if gin.Mode() == gin.DebugMode {
-		logWriters := []io.Writer{
-			logfile,
-			os.Stdout,
-		}
-		fileAndStdoutWriter := io.MultiWriter(logWriters...)
-		LogServer.SetOutput(fileAndStdoutWriter)
-	} else {
-		LogServer.SetOutput(logfile)
-	}
-}
-
 func initRandomUID() {
 	RandomTaskName = getRandomStringHex(16)
 }
@@ -46,7 +26,7 @@ func initRandomUID() {
 func initTempFileDir() {
 	err := os.Mkdir("./temp/"+RandomTaskName, 0750)
 	if err != nil {
-		LogServer.WithFields(logrus.Fields{
+		logMode.GetLogMap(RandomTaskName).WithFields(logrus.Fields{
 			"error": err.Error(),
 		}).Infoln("Error in initTempFileDir...")
 	}
@@ -63,7 +43,7 @@ func initProcessInterface() {
 // MissionInitiated 只用来初始化当前的任务
 func MissionInitiated() {
 	initRandomUID()
-	initLogServer()
+	logMode.InitLogServer(RandomTaskName)
 	initTempFileDir()
 	initMessageChan()
 	initProcessInterface()
