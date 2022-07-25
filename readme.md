@@ -3,7 +3,7 @@
 [Chinese readme](https://github.com/Yuzu815/Codeforces-ContestCodeDownload#q--a---chinese) | [English readme](https://github.com/Yuzu815/Codeforces-ContestCodeDownload#q--a---english)
 
 ## UPDATE 2022.07.25
-✌ The first web version has been released, written on the Gin, and can be deployed on any machine you like!
+✌ The first web version has been released, written on the Gin, and can be deployed on any machine you like! [Download it now!](https://github.com/Yuzu815/Codeforces-ContestCodeDownload/releases/latest)
 
 <img align="center" src="img/WebDownload.png" />
 
