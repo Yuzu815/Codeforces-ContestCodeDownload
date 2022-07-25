@@ -13,7 +13,7 @@ import (
 
 // CodeforcesUserAuth TODO F: 验证通过后，重定向到/result页面，实时显示抓取情况，并展示进度条，否则重定向到/error页面
 func CodeforcesUserAuth(context *gin.Context) {
-	cores.MissionInitiated()
+	randomUID := cores.MissionInitiated()
 	encryptedApiKey := context.PostForm("apiKey")
 	encryptedApiSecret := context.PostForm("apiSecret")
 	encryptedUsername := context.PostForm("usernameOrEmail")
@@ -26,16 +26,17 @@ func CodeforcesUserAuth(context *gin.Context) {
 	}
 	//TODO F: 添加空值校验。账号密码校验已添加，未对API KET做校验
 	userData := decryptUserData(encryptedUserData, "123")
-	if checkLoginStatus(cores.GetCodeforcesHttpClient(userData.Username, userData.Password)) == false {
+	if checkLoginStatus(cores.GetCodeforcesHttpClient(userData.Username, userData.Password, randomUID)) == false {
 		context.Redirect(http.StatusSeeOther, "?err=logErr")
-		logMode.GetLogMap(cores.RandomTaskName).Errorln("Login fail. Please check your username and password.")
+		logMode.GetLogMap(randomUID).Errorln("Login fail. Please check your username and password.")
 	} else {
-		logMode.GetLogMap(cores.RandomTaskName).WithFields(logrus.Fields{
+		logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
 			"ApiKey":   userData.ApiKey,
 			"Username": userData.Username,
 		}).Info("Have access to user information.")
-		contextCopy := context.Copy()
-		go fetchContestData(userData, contextCopy)
+		go fetchContestData(userData, randomUID)
+		cookieDomain := getSiteDomain(context.Request.Header.Get("Referer"))
+		context.SetCookie("UID", randomUID, 86400, "/", cookieDomain, false, true)
 		context.Redirect(http.StatusSeeOther, "/result")
 	}
 }
@@ -59,12 +60,18 @@ func decryptUserData(encryptedInformation model.CodeforcesUserModel, decryptedKe
 }
 
 // fetchContestData TODO F: 已改用全局MAP方案，后期需实现将每一context都绑定上一个randomID
-func fetchContestData(userData model.CodeforcesUserModel, context *gin.Context) {
+func fetchContestData(userData model.CodeforcesUserModel, randomUID string) {
 	contestID := 380042
-	result := cores.MissionCall(contestID, userData)
-	logMode.GetLogMap(cores.RandomTaskName).WithFields(logrus.Fields{
+	result := cores.MissionCall(contestID, randomUID, userData)
+	logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
 		"contestID":  contestID,
 		"jsonResult": result,
 	}).Info("Source code and record correspondence information has been obtained from codeforces.")
-	cores.CodeforcesContestResult.Store(cores.RandomTaskName, result)
+	cores.CodeforcesContestResult.Store(randomUID, result)
+}
+
+func getSiteDomain(urlStr string) string {
+	matchString := strings.Split(urlStr, "//")[1]
+	matchStringAgain := strings.Split(matchString, "/")[0]
+	return matchStringAgain
 }

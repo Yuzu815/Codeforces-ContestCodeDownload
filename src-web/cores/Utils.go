@@ -55,10 +55,10 @@ func getAllAcceptSubmissionID(apiJsonString string) []string {
 	return intersectGjsonResult(allContestantResult, allVerdictOKResult)
 }
 
-func getAPIJsonString(signedURL string) string {
+func getAPIJsonString(signedURL, randomUID string) string {
 	apiData, err := http.Get(signedURL)
 	if err != nil {
-		logMode.GetLogMap(RandomTaskName).WithFields(logrus.Fields{
+		logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
 			"reason": err.Error(),
 		}).Errorln("An error occurred while getting API URL.")
 		return ""

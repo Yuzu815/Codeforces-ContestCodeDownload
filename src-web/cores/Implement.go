@@ -33,7 +33,7 @@ type InformationStruct struct {
 	//TODO F: 对部分缩写进行重构
 }
 
-func saveSourceCodeToFile(sourceCode string, infoCode InformationStruct) {
+func saveSourceCodeToFile(sourceCode, randomUID string, infoCode InformationStruct) {
 	sufferName := ".txt"
 	abbrLANG := "Other"
 	if strings.Contains(infoCode.LANG, "C++") || strings.Contains(infoCode.LANG, "G++") || strings.Contains(infoCode.LANG, "Clang") {
@@ -54,15 +54,15 @@ func saveSourceCodeToFile(sourceCode string, infoCode InformationStruct) {
 	if strings.ContainsAny(fileName, invalidChar) {
 		invalidRegexp := regexp.MustCompile(`[` + invalidChar + `]`)
 		newFileName := invalidRegexp.ReplaceAllString(fileName, "")
-		logMode.GetLogMap(RandomTaskName).WithFields(logrus.Fields{
+		logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
 			"oldFileName": fileName,
 			"newFileName": newFileName,
 		}).Warnln("The constructed file name may contain illegal characters that are not allowed by the operating system.")
 		fileName = newFileName
 	}
-	err := ioutil.WriteFile("./temp/"+RandomTaskName+"/"+fileName, []byte(sourceCode), 0664)
+	err := ioutil.WriteFile("./temp/"+randomUID+"/"+fileName, []byte(sourceCode), 0664)
 	if err != nil {
-		logMode.GetLogMap(RandomTaskName).WithFields(logrus.Fields{
+		logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
 			"reason":   err.Error(),
 			"fileName": fileName,
 		}).Errorln("An error occurred while saving the fetched code to a file.")
@@ -74,20 +74,20 @@ func saveSourceCodeToFile(sourceCode string, infoCode InformationStruct) {
 result.author.participantType = "CONTESTANT"
 result.verdict = "OK",
 */
-func getAllAcceptSubmissionData(signedURL string, manageClient *http.Client) []InformationStruct {
-	apiJsonString := getAPIJsonString(signedURL)
+func getAllAcceptSubmissionData(signedURL, randomUID string, manageClient *http.Client) []InformationStruct {
+	apiJsonString := getAPIJsonString(signedURL, randomUID)
 	allAcceptSubmissionID := getAllAcceptSubmissionID(apiJsonString)
 	if len(allAcceptSubmissionID) == 0 {
-		logMode.GetLogMap(RandomTaskName).WithFields(logrus.Fields{
+		logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
 			"signedURL": signedURL,
 		}).Errorln("The list of obtained submission records is empty.")
 	}
 	var allNeedInformation []InformationStruct
-	taskLogMapRef, _ := TaskMessageChan.Load(RandomTaskName)
+	taskLogMapRef, _ := TaskMessageChan.Load(randomUID)
 	for index, submissionID := range allAcceptSubmissionID {
 		infoForID := gjson.Get(apiJsonString, `result.#(id=`+string(submissionID)+`)#`)
 		infoStruct := parseJsonFiles(infoForID)
-		logMode.GetLogMap(RandomTaskName).WithFields(logrus.Fields{
+		logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
 			"CID":   infoStruct.CID,
 			"ID":    infoStruct.ID,
 			"CNAME": infoStruct.CNAME,
@@ -96,21 +96,21 @@ func getAllAcceptSubmissionData(signedURL string, manageClient *http.Client) []I
 		taskLogMapRef.(chan string) <- realtimeLogStr(infoStruct)
 		var tempSourceCode string
 		if infoStruct.CID > 100000 {
-			tempSourceCode = fetchSubmissionCode(fmt.Sprintf(`https://codeforces.com/gym/%d/submission/%d`, infoStruct.CID, infoStruct.ID), manageClient)
+			tempSourceCode = fetchSubmissionCode(fmt.Sprintf(`https://codeforces.com/gym/%d/submission/%d`, infoStruct.CID, infoStruct.ID), randomUID, manageClient)
 		} else {
-			tempSourceCode = fetchSubmissionCode(fmt.Sprintf(`https://codeforces.com/contest/%d/submission/%d`, infoStruct.CID, infoStruct.ID), manageClient)
+			tempSourceCode = fetchSubmissionCode(fmt.Sprintf(`https://codeforces.com/contest/%d/submission/%d`, infoStruct.CID, infoStruct.ID), randomUID, manageClient)
 		}
-		saveSourceCodeToFile(tempSourceCode, infoStruct)
+		saveSourceCodeToFile(tempSourceCode, randomUID, infoStruct)
 		allNeedInformation = append(allNeedInformation, infoStruct)
-		logMode.GetLogMap(RandomTaskName).WithFields(logrus.Fields{
+		logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
 			"Index":        index,
 			"SubmissionID": submissionID,
 		}).Infoln("Have fetched this source...")
 		//TODO F: 此处使用全局变量来计算，后期需修正
-		PROCESS.Store(RandomTaskName, float64(index+1)/float64(len(allAcceptSubmissionID)))
+		PROCESS.Store(randomUID, float64(index+1)/float64(len(allAcceptSubmissionID)))
 	}
-	taskLogMapRef.(chan string) <- ResultIsEnd
-	ZipCompress("./temp/"+RandomTaskName, "./temp/"+RandomTaskName)
+	taskLogMapRef.(chan string) <- RESULT_IS_END_FLAG
+	ZipCompress("./temp/"+randomUID, "./temp/"+randomUID)
 	return allNeedInformation
 }
 

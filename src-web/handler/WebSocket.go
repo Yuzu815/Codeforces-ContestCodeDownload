@@ -15,6 +15,7 @@ var httpUpgrade = websocket.Upgrader{
 }
 
 func WebSocketTestInterface(context *gin.Context) {
+	UID, _ := context.Cookie("UID")
 	ws, _ := httpUpgrade.Upgrade(context.Writer, context.Request, nil)
 	defer ws.Close()
 	for {
@@ -25,12 +26,12 @@ func WebSocketTestInterface(context *gin.Context) {
 			break
 		}
 		if string(messageContext) == "TEST_CONNECTIVITY" {
-			resultMessage = "[CONNECT] " + cores.RandomTaskName
+			resultMessage = "[CONNECT] " + UID
 		} else {
 			//TODO F: 换用更加优雅的方式实现
-			missionMapLogRef, OK := cores.TaskMessageChan.Load(cores.RandomTaskName)
+			missionMapLogRef, OK := cores.TaskMessageChan.Load(UID)
 			for OK == false {
-				missionMapLogRef, OK = cores.TaskMessageChan.Load(cores.RandomTaskName)
+				missionMapLogRef, OK = cores.TaskMessageChan.Load(UID)
 				continue
 			}
 			//TODO F: 在通道中内容全被取出后，发送TEST_CONNECTIVITY测试不会返回结果，疑似因为此处被阻塞，应添加一个等待上限
@@ -41,13 +42,14 @@ func WebSocketTestInterface(context *gin.Context) {
 }
 
 func WebSocketRealTimeInfo(context *gin.Context) {
+	UID, _ := context.Cookie("UID")
 	ws, _ := httpUpgrade.Upgrade(context.Writer, context.Request, nil)
 	defer ws.Close()
 	for {
 		var resultMessage string
-		missionMapLogRef, OK := cores.TaskMessageChan.Load(cores.RandomTaskName)
+		missionMapLogRef, OK := cores.TaskMessageChan.Load(UID)
 		for OK == false {
-			missionMapLogRef, OK = cores.TaskMessageChan.Load(cores.RandomTaskName)
+			missionMapLogRef, OK = cores.TaskMessageChan.Load(UID)
 			continue
 		}
 		for {

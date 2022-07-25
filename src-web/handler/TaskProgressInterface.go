@@ -11,7 +11,8 @@ import (
 // TODO F: 使用更为优雅的方式来传递参数，而不是字符串互相转化。
 // TODO F: 目前使用全局变量，后期添加多用户支持。
 func GetProgressInterface(context *gin.Context) {
-	val, _ := cores.PROCESS.Load(cores.RandomTaskName)
+	UID, _ := context.Cookie("UID")
+	val, _ := cores.PROCESS.Load(UID)
 	if val == nil {
 		context.JSON(http.StatusOK, gin.H{
 			"error": "null",
@@ -19,7 +20,7 @@ func GetProgressInterface(context *gin.Context) {
 	} else {
 		taskProgress := strconv.FormatFloat((val.(float64))*100, 'f', -1, 64)
 		context.JSON(http.StatusOK, gin.H{
-			"UID":                    cores.RandomTaskName,
+			"UID":                    UID,
 			"CurrentMissionProgress": taskProgress,
 		})
 	}

@@ -8,5 +8,5 @@ import (
 func main() {
 	gin.SetMode(gin.DebugMode)
 	RouterServer := router.SetupRouter()
-	_ = RouterServer.Run()
+	_ = RouterServer.Run(":8080")
 }

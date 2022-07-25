@@ -48,11 +48,11 @@ func intersectGjsonResult(resultA gjson.Result, resultB gjson.Result) []string {
 	return result
 }
 
-func fetchSubmissionCode(submissionURL string, manageClient *http.Client) string {
+func fetchSubmissionCode(submissionURL, randomUID string, manageClient *http.Client) string {
 	getSourceCodeRequest, _ := http.NewRequest("GET", submissionURL, nil)
 	sourceHtmlRespond, err := manageClient.Do(getSourceCodeRequest)
 	if err != nil {
-		logMode.GetLogMap(RandomTaskName).WithFields(logrus.Fields{
+		logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
 			"reason": err.Error(),
 		}).Errorln("An error occurred while fetching the submission.")
 	}

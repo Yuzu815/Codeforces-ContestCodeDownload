@@ -19,7 +19,7 @@ func matchCsrfString(htmlString string) string {
 	return matchStringSecond[1 : len(matchStringSecond)-1]
 }
 
-func GetCodeforcesHttpClient(username, password string) (*http.Client, *http.Response) {
+func GetCodeforcesHttpClient(username, password, randomUID string) (*http.Client, *http.Response) {
 	cookiejarValue, _ := cookiejar.New(nil)
 	//Fiddler DEBUG PROXY ADDRESS
 	//TODO E: 添加网络检查，代理连接可能会失败，需处理
@@ -39,7 +39,7 @@ func GetCodeforcesHttpClient(username, password string) (*http.Client, *http.Res
 	getCsrfRequest.Header.Add("User-Agent", "Golang-FetchCode")
 	getCsrfRequestRespond, err := codeforcesHttpClient.Do(getCsrfRequest)
 	if err != nil {
-		logMode.GetLogMap(RandomTaskName).WithFields(logrus.Fields{
+		logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
 			"reason": err.Error(),
 		}).Errorln("An error occurred while fetching the CSRF TOKEN.")
 		return nil, nil
@@ -61,7 +61,7 @@ func GetCodeforcesHttpClient(username, password string) (*http.Client, *http.Res
 	getLoginCookieRequest.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	loginRespond, err := codeforcesHttpClient.Do(getLoginCookieRequest)
 	if err != nil {
-		logMode.GetLogMap(RandomTaskName).WithFields(logrus.Fields{
+		logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
 			"reason": err.Error(),
 		}).Errorln("Error when sending a POST request to simulate a login.")
 		return nil, nil
