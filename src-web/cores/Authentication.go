@@ -22,13 +22,14 @@ func matchCsrfString(htmlString string) string {
 func GetCodeforcesHttpClient(username, password, randomUID string) (*http.Client, *http.Response) {
 	cookiejarValue, _ := cookiejar.New(nil)
 	//TODO E: 添加网络检查，代理连接可能会失败，需处理
-	AccelerateProxyUrl, _ := url.Parse("http://127.0.0.1:44444")
+	//TODO F: 首頁表單添加伸縮，打開高級選項可以配置代理
+	//AccelerateProxyUrl, _ := url.Parse("http://127.0.0.1:44444")
 	codeforcesHttpClient := &http.Client{
 		Jar: cookiejarValue,
-		///*
-		Transport: &http.Transport{
-			Proxy: http.ProxyURL(AccelerateProxyUrl),
-		},
+		/*
+			Transport: &http.Transport{
+				Proxy: http.ProxyURL(AccelerateProxyUrl),
+			},
 		//*/
 	}
 	getCsrfRequest, _ := http.NewRequest("GET", "https://codeforces.com/enter?back=%2F", nil)
