@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 )
 
 func getRandomStringHex(strLen int) string {
@@ -102,7 +103,13 @@ func ZipCompress(srcDir, zipFileName, randomUID string) {
 		}
 		header, _ := zip.FileInfoHeader(info)
 		if info.IsDir() {
-			header.Name += `/`
+			var specialChar string
+			if runtime.GOOS == "windows" {
+				specialChar = "\\"
+			} else {
+				specialChar = "/"
+			}
+			header.Name += specialChar
 		} else {
 			header.Name = removeRedundantPartOfTheFileName(path)
 			header.Method = zip.Deflate
@@ -132,7 +139,14 @@ func ZipCompress(srcDir, zipFileName, randomUID string) {
 // removeRedundantPartOfTheFileName \folder1\folder2\folder3\xxx.cpp -> xxx.cpp
 func removeRedundantPartOfTheFileName(fileName string) string {
 	length := len(fileName) - 1
-	for fileName[length] != '\\' {
+	// TODO E: 最後在Linux平臺上會出現錯誤，疑似路徑表示方式不同
+	var specialChar uint8
+	if runtime.GOOS == "windows" {
+		specialChar = '\\'
+	} else {
+		specialChar = '/'
+	}
+	for fileName[length] != specialChar {
 		length--
 	}
 	return fileName[length+1:]
