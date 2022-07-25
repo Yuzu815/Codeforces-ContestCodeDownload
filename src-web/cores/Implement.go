@@ -1,7 +1,7 @@
 package cores
 
 import (
-	"Codeforces-ContestCodeDownload/src-web/logMode"
+	"Codeforces-ContestCodeDownload/src-web/logserver"
 	"Codeforces-ContestCodeDownload/src-web/model"
 	"fmt"
 	"github.com/sirupsen/logrus"
@@ -33,7 +33,7 @@ func saveSourceCodeToFile(sourceCode, randomUID string, infoCode model.Informati
 	if strings.ContainsAny(fileName, invalidChar) {
 		invalidRegexp := regexp.MustCompile(`[` + invalidChar + `]`)
 		newFileName := invalidRegexp.ReplaceAllString(fileName, "")
-		logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
+		logserver.GetLogMap(randomUID).WithFields(logrus.Fields{
 			"oldFileName": fileName,
 			"newFileName": newFileName,
 		}).Warnln("The constructed file name may contain illegal characters that are not allowed by the operating system.")
@@ -41,7 +41,7 @@ func saveSourceCodeToFile(sourceCode, randomUID string, infoCode model.Informati
 	}
 	err := ioutil.WriteFile("./temp/"+randomUID+"/"+fileName, []byte(sourceCode), 0664)
 	if err != nil {
-		logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
+		logserver.GetLogMap(randomUID).WithFields(logrus.Fields{
 			"reason":   err.Error(),
 			"fileName": fileName,
 		}).Errorln("An error occurred while saving the fetched code to a file.")
@@ -57,7 +57,7 @@ func getAllAcceptSubmissionData(signedURL, randomUID string, manageClient *http.
 	apiJsonString := getAPIJsonString(signedURL, randomUID)
 	allAcceptSubmissionID := getAllAcceptSubmissionID(apiJsonString)
 	if len(allAcceptSubmissionID) == 0 {
-		logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
+		logserver.GetLogMap(randomUID).WithFields(logrus.Fields{
 			"signedURL": signedURL,
 		}).Errorln("The list of obtained submission records is empty.")
 	}
@@ -66,7 +66,7 @@ func getAllAcceptSubmissionData(signedURL, randomUID string, manageClient *http.
 	for index, submissionID := range allAcceptSubmissionID {
 		infoForID := gjson.Get(apiJsonString, `result.#(id=`+string(submissionID)+`)#`)
 		infoStruct := parseJsonFiles(infoForID)
-		logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
+		logserver.GetLogMap(randomUID).WithFields(logrus.Fields{
 			"CID":   infoStruct.CID,
 			"ID":    infoStruct.ID,
 			"CNAME": infoStruct.CNAME,
@@ -81,7 +81,7 @@ func getAllAcceptSubmissionData(signedURL, randomUID string, manageClient *http.
 		}
 		saveSourceCodeToFile(tempSourceCode, randomUID, infoStruct)
 		allNeedInformation = append(allNeedInformation, infoStruct)
-		logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
+		logserver.GetLogMap(randomUID).WithFields(logrus.Fields{
 			"Index":        index,
 			"SubmissionID": submissionID,
 		}).Infoln("Have fetched this source...")

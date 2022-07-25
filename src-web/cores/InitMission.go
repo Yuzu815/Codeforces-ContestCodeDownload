@@ -1,7 +1,7 @@
 package cores
 
 import (
-	"Codeforces-ContestCodeDownload/src-web/logMode"
+	"Codeforces-ContestCodeDownload/src-web/logserver"
 	"Codeforces-ContestCodeDownload/src-web/model"
 	"github.com/sirupsen/logrus"
 	"os"
@@ -19,15 +19,15 @@ var TaskMessageChan = sync.Map{}
 
 func initRandomUIDLogServer() string {
 	randomUID := getRandomStringHex(16)
-	logMode.InitLogServer(randomUID)
-	logMode.GetLogMap(randomUID).Infoln("Successful mission creation, UID: " + randomUID)
+	logserver.InitLogServer(randomUID)
+	logserver.GetLogMap(randomUID).Infoln("Successful mission creation, UID: " + randomUID)
 	return randomUID
 }
 
 func initTempFileDir(randomUID string) {
 	err := os.Mkdir("./temp/"+randomUID, 0750)
 	if err != nil {
-		logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
+		logserver.GetLogMap(randomUID).WithFields(logrus.Fields{
 			"error": err.Error(),
 		}).Infoln("Error in initTempFileDir...")
 	}
@@ -55,14 +55,14 @@ func MissionCall(contestID int, randomUID string, info model.CodeforcesUserModel
 	action := "/contest.status?"
 	actionParameter := "contestId=" + strconv.Itoa(contestID)
 	signedURL := getSignedURL(info.ApiKey, info.ApiSecret, action, actionParameter)
-	logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
+	logserver.GetLogMap(randomUID).WithFields(logrus.Fields{
 		"signed URL": signedURL,
 	}).Infoln("generate signed URL.")
 	//TODO F: 对返回的loginRespond进行检查
 	httpClient, _ := GetCodeforcesHttpClient(info.Username, info.Password, randomUID)
 	// TODO E: 某些时候CSRF匹配失败时，程序会崩溃，需做特殊处理，此處直接返回簡單處理下。
 	if httpClient == nil {
-		logMode.GetLogMap(randomUID).Errorln("httpClient is NULL. Please check network or website availability.")
+		logserver.GetLogMap(randomUID).Errorln("httpClient is NULL. Please check network or website availability.")
 	}
 	getAllAcceptSubmissionData(signedURL, randomUID, httpClient)
 }

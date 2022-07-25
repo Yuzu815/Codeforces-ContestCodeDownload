@@ -1,7 +1,7 @@
 package cores
 
 import (
-	"Codeforces-ContestCodeDownload/src-web/logMode"
+	"Codeforces-ContestCodeDownload/src-web/logserver"
 	"Codeforces-ContestCodeDownload/src-web/model"
 	"archive/zip"
 	"crypto/rand"
@@ -59,7 +59,7 @@ func getAllAcceptSubmissionID(apiJsonString string) []string {
 func getAPIJsonString(signedURL, randomUID string) string {
 	apiData, err := http.Get(signedURL)
 	if err != nil {
-		logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
+		logserver.GetLogMap(randomUID).WithFields(logrus.Fields{
 			"reason": err.Error(),
 		}).Errorln("An error occurred while getting API URL.")
 		return ""
@@ -72,7 +72,7 @@ func getAPIJsonString(signedURL, randomUID string) string {
 // ZipCompress
 // Copy from https://studygolang.com/articles/34943
 func ZipCompress(srcDir, zipFileName, randomUID string) {
-	logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
+	logserver.GetLogMap(randomUID).WithFields(logrus.Fields{
 		"srcDir":      srcDir,
 		"zipFileName": zipFileName,
 		"randomUID":   randomUID,
@@ -80,20 +80,20 @@ func ZipCompress(srcDir, zipFileName, randomUID string) {
 	zipFileName = zipFileName + ".zip"
 	zipFile, err := os.Create(zipFileName)
 	if err != nil {
-		logMode.GetLogMap(randomUID).Errorln("err: " + err.Error())
+		logserver.GetLogMap(randomUID).Errorln("err: " + err.Error())
 		return
 	}
 	defer func(zipFile *os.File) {
 		err := zipFile.Close()
 		if err != nil {
-			logMode.GetLogMap(randomUID).Errorln(err.Error())
+			logserver.GetLogMap(randomUID).Errorln(err.Error())
 		}
 	}(zipFile)
 	archive := zip.NewWriter(zipFile)
 	defer func(archive *zip.Writer) {
 		err := archive.Close()
 		if err != nil {
-			logMode.GetLogMap(randomUID).Errorln(err.Error())
+			logserver.GetLogMap(randomUID).Errorln(err.Error())
 		}
 	}(archive)
 	err = filepath.Walk(srcDir, func(path string, info os.FileInfo, _ error) error {
@@ -113,7 +113,7 @@ func ZipCompress(srcDir, zipFileName, randomUID string) {
 			defer func(file *os.File) {
 				err := file.Close()
 				if err != nil {
-					logMode.GetLogMap(randomUID).Errorln(err.Error())
+					logserver.GetLogMap(randomUID).Errorln(err.Error())
 				}
 			}(file)
 			_, err := io.Copy(writer, file)
@@ -124,7 +124,7 @@ func ZipCompress(srcDir, zipFileName, randomUID string) {
 		return nil
 	})
 	if err != nil {
-		logMode.GetLogMap(randomUID).Errorln(err.Error())
+		logserver.GetLogMap(randomUID).Errorln(err.Error())
 		return
 	}
 }

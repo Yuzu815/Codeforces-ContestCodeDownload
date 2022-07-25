@@ -1,7 +1,7 @@
 package cores
 
 import (
-	"Codeforces-ContestCodeDownload/src-web/logMode"
+	"Codeforces-ContestCodeDownload/src-web/logserver"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
@@ -36,14 +36,14 @@ func GetCodeforcesHttpClient(username, password, randomUID string) (*http.Client
 	getCsrfRequest.Header.Add("User-Agent", "Golang-FetchCode")
 	getCsrfRequestRespond, err := codeforcesHttpClient.Do(getCsrfRequest)
 	if err != nil {
-		logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
+		logserver.GetLogMap(randomUID).WithFields(logrus.Fields{
 			"reason": err.Error(),
 		}).Errorln("An error occurred while fetching the CSRF TOKEN.")
 		return nil, nil
 	}
 	includedCsrfBodyData, _ := ioutil.ReadAll(getCsrfRequestRespond.Body)
 	csrfValue := matchCsrfString(string(includedCsrfBodyData))
-	logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
+	logserver.GetLogMap(randomUID).WithFields(logrus.Fields{
 		"CSRF Value": csrfValue,
 	}).Infoln("Matched CSRF Value")
 	postValue := url.Values{
@@ -61,7 +61,7 @@ func GetCodeforcesHttpClient(username, password, randomUID string) (*http.Client
 	getLoginCookieRequest.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	response, err := codeforcesHttpClient.Do(getLoginCookieRequest)
 	if err != nil {
-		logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
+		logserver.GetLogMap(randomUID).WithFields(logrus.Fields{
 			"reason": err.Error(),
 		}).Errorln("Error when sending a POST request to simulate a login.")
 		return nil, response

@@ -1,4 +1,4 @@
-package logMode
+package logserver
 
 import (
 	"github.com/gin-gonic/gin"

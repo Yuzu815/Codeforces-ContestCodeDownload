@@ -2,7 +2,7 @@ package handler
 
 import (
 	"Codeforces-ContestCodeDownload/src-web/cores"
-	"Codeforces-ContestCodeDownload/src-web/logMode"
+	"Codeforces-ContestCodeDownload/src-web/logserver"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"net/http"
@@ -20,7 +20,7 @@ func WebSocketRealTimeInfo(context *gin.Context) {
 	defer func(ws *websocket.Conn) {
 		err := ws.Close()
 		if err != nil {
-			logMode.GetLogMap(UID).Errorln(err.Error())
+			logserver.GetLogMap(UID).Errorln(err.Error())
 		}
 	}(ws)
 	for {
@@ -35,7 +35,7 @@ func WebSocketRealTimeInfo(context *gin.Context) {
 				resultMessage, _ = <-missionMapLogRef.(chan string)
 				err := ws.WriteMessage(websocket.TextMessage, []byte(resultMessage))
 				if err != nil {
-					logMode.GetLogMap(UID).Errorln(err.Error())
+					logserver.GetLogMap(UID).Errorln(err.Error())
 					return
 				}
 			} else {
