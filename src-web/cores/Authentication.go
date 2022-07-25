@@ -21,16 +21,13 @@ func matchCsrfString(htmlString string) string {
 
 func GetCodeforcesHttpClient(username, password, randomUID string) (*http.Client, *http.Response) {
 	cookiejarValue, _ := cookiejar.New(nil)
-	//Fiddler DEBUG PROXY ADDRESS
 	//TODO E: 添加网络检查，代理连接可能会失败，需处理
-	//DEBUG_PROXY_URL, _ := url.Parse("http://127.0.0.1:8866")
-	ACCELERATE_PROXY_URL, _ := url.Parse("http://127.0.0.1:44444")
+	AccelerateProxyUrl, _ := url.Parse("http://127.0.0.1:44444")
 	codeforcesHttpClient := &http.Client{
 		Jar: cookiejarValue,
 		///*
 		Transport: &http.Transport{
-			Proxy: http.ProxyURL(ACCELERATE_PROXY_URL),
-			//Proxy: http.ProxyURL(DEBUG_PROXY_URL),
+			Proxy: http.ProxyURL(AccelerateProxyUrl),
 		},
 		//*/
 	}
@@ -46,6 +43,9 @@ func GetCodeforcesHttpClient(username, password, randomUID string) (*http.Client
 	}
 	includedCsrfBodyData, _ := ioutil.ReadAll(getCsrfRequestRespond.Body)
 	csrfValue := matchCsrfString(string(includedCsrfBodyData))
+	logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
+		"CSRF Value": csrfValue,
+	}).Infoln("Matched CSRF Value")
 	postValue := url.Values{
 		"csrf_token":    {csrfValue},
 		"action":        {"enter"},
@@ -59,12 +59,12 @@ func GetCodeforcesHttpClient(username, password, randomUID string) (*http.Client
 	getLoginCookieRequest.Header.Add("Host", "codeforces.com")
 	getLoginCookieRequest.Header.Add("User-Agent", "Golang-FetchCode")
 	getLoginCookieRequest.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	loginRespond, err := codeforcesHttpClient.Do(getLoginCookieRequest)
+	response, err := codeforcesHttpClient.Do(getLoginCookieRequest)
 	if err != nil {
 		logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
 			"reason": err.Error(),
 		}).Errorln("Error when sending a POST request to simulate a login.")
-		return nil, nil
+		return nil, response
 	}
-	return codeforcesHttpClient, loginRespond
+	return codeforcesHttpClient, response
 }

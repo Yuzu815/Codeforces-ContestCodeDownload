@@ -8,14 +8,14 @@ import (
 	"sync"
 )
 
-// LogServerMap TODO F: 稍晚将日志部分抽离出来，并日志中应能返回对应的函数名
-var LogServerMap = sync.Map{}
+// logServerMap TODO F: 稍晚将日志部分抽离出来，并日志中应能返回对应的函数名
+var logServerMap = sync.Map{}
 
 func InitLogServer(randomTaskUID string) {
 	logServer := logrus.New()
-	//logrus.SetLevel(logrus.TraceLevel)
 	logServer.SetLevel(logrus.InfoLevel)
 	logServer.SetFormatter(&logrus.JSONFormatter{})
+	logServer.SetReportCaller(true)
 	logfile, _ := os.OpenFile("./log/"+randomTaskUID+".log", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
 	if gin.Mode() == gin.DebugMode {
 		logWriters := []io.Writer{
@@ -27,11 +27,11 @@ func InitLogServer(randomTaskUID string) {
 	} else {
 		logServer.SetOutput(logfile)
 	}
-	LogServerMap.Store(randomTaskUID, logServer)
+	logServerMap.Store(randomTaskUID, logServer)
 }
 
 func GetLogMap(randomTaskID string) *logrus.Logger {
-	logServer, OK := LogServerMap.Load(randomTaskID)
+	logServer, OK := logServerMap.Load(randomTaskID)
 	if OK == false {
 		return nil
 	} else {
@@ -39,11 +39,11 @@ func GetLogMap(randomTaskID string) *logrus.Logger {
 	}
 }
 
-func GetLogMapBool(randomTaskID any, isOK bool) *logrus.Logger {
+func GetLogMapWithBool(randomTaskID any, isOK bool) *logrus.Logger {
 	if isOK == false {
 		return nil
 	}
-	logServer, OK := LogServerMap.Load(randomTaskID)
+	logServer, OK := logServerMap.Load(randomTaskID)
 	if OK == false {
 		return nil
 	} else {

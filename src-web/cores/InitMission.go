@@ -11,11 +11,8 @@ import (
 
 const RESULT_IS_END_FLAG = "RESULT_IS_END_FLAG"
 
-// PROCESS 用于存UID对应的进度
-var PROCESS = sync.Map{}
-
-// CodeforcesContestResult TODO F: 后期使用结构体封装，改造为定时删除数据
-var CodeforcesContestResult = sync.Map{}
+// MissionProgressMap 用于存UID对应的进度
+var MissionProgressMap = sync.Map{}
 
 // TaskMessageChan TODO F: 将每一ID映射为一个通道，需实现定期删除
 var TaskMessageChan = sync.Map{}
@@ -23,6 +20,7 @@ var TaskMessageChan = sync.Map{}
 func initRandomUIDLogServer() string {
 	randomUID := getRandomStringHex(16)
 	logMode.InitLogServer(randomUID)
+	logMode.GetLogMap(randomUID).Infoln("Successful mission creation, UID: " + randomUID)
 	return randomUID
 }
 
@@ -40,7 +38,7 @@ func initMessageChan(randomUID string) {
 }
 
 func initProcessInterface(randomUID string) {
-	PROCESS.Store(randomUID, 0.0)
+	MissionProgressMap.Store(randomUID, 0.0)
 }
 
 // MissionInitiated 只用来初始化当前的任务
@@ -52,17 +50,19 @@ func MissionInitiated() string {
 	return randomUID
 }
 
-// MissionCall TODO F: 作为任务启动的接口，返回值格式需进行一定的修改，预期添加文件名。
-func MissionCall(contestID int, randomUID string, info model.CodeforcesUserModel) []InformationStruct {
+// MissionCall TODO F: 作为任务启动的接口，返回值格式需进行一定地修改，预期添加文件名。
+func MissionCall(contestID int, randomUID string, info model.CodeforcesUserModel) {
 	action := "/contest.status?"
 	actionParameter := "contestId=" + strconv.Itoa(contestID)
 	signedURL := getSignedURL(info.ApiKey, info.ApiSecret, action, actionParameter)
+	logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
+		"signed URL": signedURL,
+	}).Infoln("generate signed URL.")
 	//TODO F: 对返回的loginRespond进行检查
 	httpClient, _ := GetCodeforcesHttpClient(info.Username, info.Password, randomUID)
 	// TODO E: 某些时候CSRF匹配失败时，程序会崩溃，需做特殊处理，此處直接返回簡單處理下。
 	if httpClient == nil {
-		return nil
+		logMode.GetLogMap(randomUID).Errorln("httpClient is NULL. Please check network or website availability.")
 	}
-	//TODO F: 不再设置返回值的形式，考虑改写为写入一个单独文件
-	return getAllAcceptSubmissionData(signedURL, randomUID, httpClient)
+	getAllAcceptSubmissionData(signedURL, randomUID, httpClient)
 }

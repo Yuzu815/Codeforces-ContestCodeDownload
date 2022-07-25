@@ -2,6 +2,7 @@ package cores
 
 import (
 	"Codeforces-ContestCodeDownload/src-web/logMode"
+	"Codeforces-ContestCodeDownload/src-web/model"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
@@ -11,29 +12,7 @@ import (
 	"strings"
 )
 
-// InformationStruct
-/*
-# Return Information
-ID := result.id
-CID := result.contestId
-PID := result.problem.index
-PNAME := result.problem.name
-CNAME := result.author.members.[name(Maybe NULL)/handle]
-LANG := result.programmingLanguage
-
-fileName := PID-PNAME-CNAME-LANG(CID#ID)
-*/
-type InformationStruct struct {
-	ID    int64
-	CID   int64
-	PID   string
-	PNAME string
-	CNAME string
-	LANG  string
-	//TODO F: 对部分缩写进行重构
-}
-
-func saveSourceCodeToFile(sourceCode, randomUID string, infoCode InformationStruct) {
+func saveSourceCodeToFile(sourceCode, randomUID string, infoCode model.InformationStruct) {
 	sufferName := ".txt"
 	abbrLANG := "Other"
 	if strings.Contains(infoCode.LANG, "C++") || strings.Contains(infoCode.LANG, "G++") || strings.Contains(infoCode.LANG, "Clang") {
@@ -74,7 +53,7 @@ func saveSourceCodeToFile(sourceCode, randomUID string, infoCode InformationStru
 result.author.participantType = "CONTESTANT"
 result.verdict = "OK",
 */
-func getAllAcceptSubmissionData(signedURL, randomUID string, manageClient *http.Client) []InformationStruct {
+func getAllAcceptSubmissionData(signedURL, randomUID string, manageClient *http.Client) []model.InformationStruct {
 	apiJsonString := getAPIJsonString(signedURL, randomUID)
 	allAcceptSubmissionID := getAllAcceptSubmissionID(apiJsonString)
 	if len(allAcceptSubmissionID) == 0 {
@@ -82,7 +61,7 @@ func getAllAcceptSubmissionData(signedURL, randomUID string, manageClient *http.
 			"signedURL": signedURL,
 		}).Errorln("The list of obtained submission records is empty.")
 	}
-	var allNeedInformation []InformationStruct
+	var allNeedInformation []model.InformationStruct
 	taskLogMapRef, _ := TaskMessageChan.Load(randomUID)
 	for index, submissionID := range allAcceptSubmissionID {
 		infoForID := gjson.Get(apiJsonString, `result.#(id=`+string(submissionID)+`)#`)
@@ -107,13 +86,13 @@ func getAllAcceptSubmissionData(signedURL, randomUID string, manageClient *http.
 			"SubmissionID": submissionID,
 		}).Infoln("Have fetched this source...")
 		//TODO F: 此处使用全局变量来计算，后期需修正
-		PROCESS.Store(randomUID, float64(index+1)/float64(len(allAcceptSubmissionID)))
+		MissionProgressMap.Store(randomUID, float64(index+1)/float64(len(allAcceptSubmissionID)))
 	}
 	taskLogMapRef.(chan string) <- RESULT_IS_END_FLAG
-	ZipCompress("./temp/"+randomUID, "./temp/"+randomUID)
+	ZipCompress("./temp/"+randomUID, "./temp/"+randomUID, randomUID)
 	return allNeedInformation
 }
 
-func realtimeLogStr(jsonResult InformationStruct) string {
+func realtimeLogStr(jsonResult model.InformationStruct) string {
 	return fmt.Sprintf("[Info] CID:%d ID:%d CNAME:%s LANG:%s\n", jsonResult.CID, jsonResult.ID, jsonResult.CNAME, jsonResult.LANG)
 }

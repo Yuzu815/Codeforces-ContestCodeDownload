@@ -2,6 +2,7 @@ package cores
 
 import (
 	"Codeforces-ContestCodeDownload/src-web/logMode"
+	"Codeforces-ContestCodeDownload/src-web/model"
 	"archive/zip"
 	"crypto/rand"
 	"encoding/hex"
@@ -34,8 +35,8 @@ func getRandomStringHex(strLen int) string {
 	return string(dst[:strLen])
 }
 
-func parseJsonFiles(infoForID gjson.Result) InformationStruct {
-	var temp InformationStruct
+func parseJsonFiles(infoForID gjson.Result) model.InformationStruct {
+	var temp model.InformationStruct
 	temp.ID = infoForID.Get(`0.id`).Int()
 	temp.CID = infoForID.Get(`0.contestId`).Int()
 	temp.PID = infoForID.Get(`0.problem.index`).String()
@@ -70,13 +71,32 @@ func getAPIJsonString(signedURL, randomUID string) string {
 
 // ZipCompress
 // Copy from https://studygolang.com/articles/34943
-func ZipCompress(srcDir string, zipFileName string) {
+func ZipCompress(srcDir, zipFileName, randomUID string) {
+	logMode.GetLogMap(randomUID).WithFields(logrus.Fields{
+		"srcDir":      srcDir,
+		"zipFileName": zipFileName,
+		"randomUID":   randomUID,
+	}).Infoln("Start ZipCompress.")
 	zipFileName = zipFileName + ".zip"
-	zipFile, _ := os.Create(zipFileName)
-	defer zipFile.Close()
+	zipFile, err := os.Create(zipFileName)
+	if err != nil {
+		logMode.GetLogMap(randomUID).Errorln("err: " + err.Error())
+		return
+	}
+	defer func(zipFile *os.File) {
+		err := zipFile.Close()
+		if err != nil {
+			logMode.GetLogMap(randomUID).Errorln(err.Error())
+		}
+	}(zipFile)
 	archive := zip.NewWriter(zipFile)
-	defer archive.Close()
-	filepath.Walk(srcDir, func(path string, info os.FileInfo, _ error) error {
+	defer func(archive *zip.Writer) {
+		err := archive.Close()
+		if err != nil {
+			logMode.GetLogMap(randomUID).Errorln(err.Error())
+		}
+	}(archive)
+	err = filepath.Walk(srcDir, func(path string, info os.FileInfo, _ error) error {
 		if path == srcDir {
 			return nil
 		}
@@ -84,21 +104,33 @@ func ZipCompress(srcDir string, zipFileName string) {
 		if info.IsDir() {
 			header.Name += `/`
 		} else {
-			header.Name = resolveFileName(path)
+			header.Name = removeRedundantPartOfTheFileName(path)
 			header.Method = zip.Deflate
 		}
 		writer, _ := archive.CreateHeader(header)
 		if !info.IsDir() {
 			file, _ := os.Open(path)
-			defer file.Close()
-			io.Copy(writer, file)
+			defer func(file *os.File) {
+				err := file.Close()
+				if err != nil {
+					logMode.GetLogMap(randomUID).Errorln(err.Error())
+				}
+			}(file)
+			_, err := io.Copy(writer, file)
+			if err != nil {
+				return err
+			}
 		}
 		return nil
 	})
+	if err != nil {
+		logMode.GetLogMap(randomUID).Errorln(err.Error())
+		return
+	}
 }
 
-// resolveFileName \folder1\folder2\folder3\xxx.cpp -> xxx.cpp
-func resolveFileName(fileName string) string {
+// removeRedundantPartOfTheFileName \folder1\folder2\folder3\xxx.cpp -> xxx.cpp
+func removeRedundantPartOfTheFileName(fileName string) string {
 	length := len(fileName) - 1
 	for fileName[length] != '\\' {
 		length--

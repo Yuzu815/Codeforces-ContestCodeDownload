@@ -5,8 +5,9 @@ import (
 	"net/http"
 )
 
-func parseErrInfo(err string) string {
-	returnStr := ""
+func parseErrInfo(context *gin.Context) string {
+	err := context.Query("err")
+	var returnStr string
 	if err == "logErr" {
 		returnStr = "Login failed. Please check the account and password are correct!"
 	}
@@ -16,6 +17,6 @@ func parseErrInfo(err string) string {
 func IndexPage(context *gin.Context) {
 	context.HTML(http.StatusOK, "Index.gohtml", gin.H{
 		"title": "Login Page",
-		"error": parseErrInfo(context.Query("err")),
+		"error": parseErrInfo(context.Copy()),
 	})
 }

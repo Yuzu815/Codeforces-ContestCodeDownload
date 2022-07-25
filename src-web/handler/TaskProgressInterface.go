@@ -12,16 +12,16 @@ import (
 // TODO F: 目前使用全局变量，后期添加多用户支持。
 func GetProgressInterface(context *gin.Context) {
 	UID, _ := context.Cookie("UID")
-	val, _ := cores.PROCESS.Load(UID)
+	val, _ := cores.MissionProgressMap.Load(UID)
 	if val == nil {
 		context.JSON(http.StatusOK, gin.H{
 			"error": "null",
 		})
 	} else {
-		taskProgress := strconv.FormatFloat((val.(float64))*100, 'f', -1, 64)
+		missionProgress := strconv.FormatFloat((val.(float64))*100, 'f', -1, 64)
 		context.JSON(http.StatusOK, gin.H{
 			"UID":                    UID,
-			"CurrentMissionProgress": taskProgress,
+			"CurrentMissionProgress": missionProgress,
 		})
 	}
 }
