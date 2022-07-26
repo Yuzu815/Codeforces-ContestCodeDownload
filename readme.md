@@ -1,6 +1,6 @@
 # Codeforces-ContestCodeDownload
 
-## UPDATE 2022.07.25
+## ✨ UPDATE 2022.07.25
 ✌ The first web version has been released, written on the Gin, and can be deployed on any machine you like! [Download it now!](https://github.com/Yuzu815/Codeforces-ContestCodeDownload/releases/latest)
 
 Demo: You can choose the rear any site: &emsp; 🤠[Site A](https://accelerate-cf-demo.webdisk.online) &ensp; | &ensp; 🧐[Site B](https://cf-demo.webdisk.online).
@@ -9,7 +9,7 @@ Demo: You can choose the rear any site: &emsp; 🤠[Site A](https://accelerate-c
 
 <img align="center" src="img/WebDownload.png" />
 
-## Q & A
+## ❓ Q & A
 
 Q: What does this tool do?
 
@@ -41,7 +41,7 @@ A: Actually, there is still a little problem. The code is written in Go, and I'm
 
 In addition, no multi-threading has been added, so the download speed may be limited.
 
-## Screenshots
+## 🎈 Screenshots
 
 - **Manager, can export submissions.**
 
@@ -69,12 +69,12 @@ In addition, no multi-threading has been added, so the download speed may be lim
 
 ---
 
-## Presentation-Cli
+## 🎨 Presentation-Cli
 
 ![pre.gif](img/Pre.gif)
 
 
-## Donate
+## ☕ Donate
 
 If you like this project, for the author to buy a cup of coffee, please!
 
@@ -87,5 +87,11 @@ If you like this project, for the author to buy a cup of coffee, please!
 ### WeChat QR code
 
 ![WeChat](/img/donate.png)
+
+## 😶 Star 
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Yuzu815/Codeforces-ContestCodeDownload&type=Date)](https://star-history.com/#Yuzu815/Codeforces-ContestCodeDownload&Date)
+
+
 
 
