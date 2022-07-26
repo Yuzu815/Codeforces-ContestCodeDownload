@@ -5,6 +5,8 @@
 
 Demo: You can choose the rear any site: &emsp; 🤠[Site A](https://accelerate-cf-demo.webdisk.online) &ensp; | &ensp; 🧐[Site B](https://cf-demo.webdisk.online).
 
+**Attention: In demo, we do not collect your password. However, during the code download process, all records in the contest will be stored in a log for bug resolution.**
+
 <img align="center" src="img/WebDownload.png" />
 
 ## Q & A
