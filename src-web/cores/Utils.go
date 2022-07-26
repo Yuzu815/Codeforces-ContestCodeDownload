@@ -42,7 +42,7 @@ func parseJsonFiles(infoForID gjson.Result) model.InformationStruct {
 	temp.CID = infoForID.Get(`0.contestId`).Int()
 	temp.PID = infoForID.Get(`0.problem.index`).String()
 	temp.PNAME = infoForID.Get(`0.problem.name`).String()
-	if infoForID.Get(`0.author.members`).Int() == 1 {
+	if infoForID.Get(`0.author.members.0.handle`).Exists() {
 		temp.CNAME = infoForID.Get(`0.author.members.0.handle`).String()
 	} else {
 		temp.CNAME = infoForID.Get(`0.author.members.0.name`).String()
