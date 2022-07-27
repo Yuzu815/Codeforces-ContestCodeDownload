@@ -1,5 +1,7 @@
 # Codeforces-ContestCodeDownload
 
+[![Page Views Count](https://badges.toozhao.com/badges/01G8Z5B0VBRMQF26321XZPZD8Q/green.svg)](https://badges.toozhao.com/stats/01G8Z5B0VBRMQF26321XZPZD8Q "Get your own page views count badge on badges.toozhao.com")
+
 ## ✨ UPDATE 2022.07.25
 ✌ The first web version has been released, written on the Gin, and can be deployed on any machine you like! [Download it now!](https://github.com/Yuzu815/Codeforces-ContestCodeDownload/releases/latest)
 
