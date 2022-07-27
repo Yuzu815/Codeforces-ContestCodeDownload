@@ -23,6 +23,7 @@ func WebSocketRealTimeInfo(context *gin.Context) {
 			logserver.GetLogMap(UID).Errorln(err.Error())
 		}
 	}(ws)
+	//TODO F: 客户机断开连接时可能会出现通道阻塞的问题，需修正。Socket断线重连无需新开，需修正。
 	for {
 		var resultMessage string
 		missionMapLogRef, OK := cores.TaskMessageChan.Load(UID)

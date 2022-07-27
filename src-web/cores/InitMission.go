@@ -34,7 +34,8 @@ func initTempFileDir(randomUID string) {
 }
 
 func initMessageChan(randomUID string) {
-	TaskMessageChan.Store(randomUID, make(chan string, 100))
+	// TODO F: 缓存部分拉高，以防在socket处被卡死，后期必须修改
+	TaskMessageChan.Store(randomUID, make(chan string, 500000))
 }
 
 func initProcessInterface(randomUID string) {
