@@ -80,15 +80,23 @@ In addition, no multi-threading has been added, so the download speed may be lim
 
 If you like this project, for the author to buy a cup of coffee, please!
 
+### WeChat QR code
+
+<img src="https://github.com/Yuzu815/Codeforces-ContestCodeDownload/blob/main/img/donate.png?raw=true" width="300px">
+
 ### TON
 
 **ton://transfer/EQCeDSzxHt06YSFRJ644-T3jS_qL46SH2S4Gnlp96yt2dAtq**
 
-![TON Address](https://raw.githubusercontent.com/Yuzu815/Codeforces-ContestCodeDownload/769dec60def806cc8c03887da09f72fafc9f1556/TON%20QR.png)
+<img src="https://raw.githubusercontent.com/Yuzu815/Codeforces-ContestCodeDownload/769dec60def806cc8c03887da09f72fafc9f1556/TON%20QR.png" width="300px">
 
-### WeChat QR code
+### TRON
 
-![WeChat](/img/donate.png)
+**Invoice address: TLythJ1ScGrvofWv8GGJU1apXcaLSbmDAy**
+
+<img src="https://github.com/Yuzu815/Codeforces-ContestCodeDownload/blob/main/img/TronLink.png?raw=true" width="400px">
+
+
 
 ## 😶 Star 
 
