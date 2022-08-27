@@ -15,6 +15,8 @@ Demo: You can choose the rear any site: &emsp; 🤠[Site A](https://cf-demo.webd
 
 <img align="center" src="img/WebDownload.png" />
 
+<img align="center" src="img/demo2.png" />
+
 ## ❓ Q & A
 
 Q: What does this tool do?
