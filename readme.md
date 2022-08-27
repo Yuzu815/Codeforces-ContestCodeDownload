@@ -5,11 +5,13 @@
 ## ✨ UPDATE 2022.07.25
 ✌ The first web version has been released, written on the Gin, and can be deployed on any machine you like! [Download it now!](https://github.com/Yuzu815/Codeforces-ContestCodeDownload/releases/latest)
 
-Demo: You can choose the rear any site: &emsp; 🤠[Site A](http://39.108.138.253:50001/) &ensp; | &ensp; 🧐[Site B](https://cf-demo.webdisk.online:50000/).
+Demo: You can choose the rear any site: &emsp; 🤠[Site A](https://cf-demo.webdisk.online/) &ensp; | &ensp; 🧐[Site B](https://accelerate-cf-demo.webdisk.online/).
 
 **Attention: In demo, we do not collect your password. However, during the code download process, all records in the contest will be stored in a log for bug resolution.**
 
-**Other Attention: Due to policy restrictions, non-conventional ports are currently used for https communication, but there is still no guarantee that a secure connection will be successfully established. Therefore, two sites are currently provided, one using IP as the access method and a non-conventional port to establish an http connection (basically feasible but not secure) and one using a domain name as the access method and a non-conventional port to establish an https connection (not always feasible but more secure).**
+~~**Other Attention: Due to policy restrictions, non-conventional ports are currently used for https communication, but there is still no guarantee that a secure connection will be successfully established. Therefore, two sites are currently provided, one using IP as the access method and a non-conventional port to establish an http connection (basically feasible but not secure) and one using a domain name as the access method and a non-conventional port to establish an https connection (not always feasible but more secure).**~~ 
+
+**(Temporary recovery) 😂😂**
 
 <img align="center" src="img/WebDownload.png" />
 
